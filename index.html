@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rubik's Cube Cross Solver</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 1em;
+    }
+
+    /* Container sections for different inputs */
+    #scrambleInputSection,
+    #crossInputSection {
+      margin-bottom: 15px;
+    }
+
+    /* Scramble input box is 500px wide */
+    #scramble {
+      width: 500px;
+      padding: 8px;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    /* Edge boxes (location mode) are 100px wide */
+    .edge-box {
+      width: 100px !important;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    #output {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    .mode-section {
+      margin-bottom: 10px;
+    }
+
+    /* Table for the four edge inputs */
+    .edge-input-table {
+      display: table;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    .edge-row {
+      display: table-row;
+    }
+    .edge-cell {
+      display: table-cell;
+      vertical-align: middle;
+      padding: 5px 10px;
+    }
+
+    /* BOLD, single-color labels for edges */
+    .wg-label {
+      font-weight: bold;
+      color: green;
+    }
+    .wo-label {
+      font-weight: bold;
+      color: orange;
+    }
+    .wb-label {
+      font-weight: bold;
+      color: blue;
+    }
+    .wr-label {
+      font-weight: bold;
+      color: red;
+    }
+
+    /* ==== 2D Cube Net Layout ==== */
+    .cube {
+      display: grid;
+      /* originally 30px, add 20 => 50px total for margin-top */
+      margin-top: 50px;
+      grid-template-columns: repeat(12, 30px);
+      grid-template-rows: repeat(9, 30px);
+      gap: 2px;
+    }
+    .sticker {
+      width: 30px;
+      height: 30px;
+      background-color: #ccc;
+      border: 1px solid #999;
+    }
+    .face {
+      display: grid;
+      grid-template-columns: repeat(3, 30px);
+      grid-template-rows: repeat(3, 30px);
+    }
+    .U  { grid-column: 4 / span 3; grid-row: 1 / span 3; }
+    .L  { grid-column: 1 / span 3; grid-row: 4 / span 3; }
+    .F  { grid-column: 4 / span 3; grid-row: 4 / span 3; }
+    .R  { grid-column: 7 / span 3; grid-row: 4 / span 3; }
+    .B  { grid-column: 10 / span 3; grid-row: 4 / span 3; }
+    .D  { grid-column: 4 / span 3; grid-row: 7 / span 3; }
+
+    /* Standard color classes */
+    .white { background-color: white !important; }
+    .green { background-color: palegreen !important; }
+    .red   { background-color: #f76360 !important; }
+    .blue  { background-color: lightskyblue !important; }
+    .orange{ background-color: #f0ab67 !important; }
+    .yellow{ background-color: #f0f27e !important; }
+
+    /* ==== 3D Cube Styles ==== */
+    .cube3d-container {
+      margin-top: 80px;
+      margin-left: 100px;
+      perspective: 1000px;
+      display: flex;
+      cursor: grab;
+    }
+    .cube3d {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      transform-style: preserve-3d;
+      transform: rotateX(-30deg) rotateY(-30deg);
+      transition: transform 0.1s ease-out;
+    }
+    .face3d {
+      position: absolute;
+      width: 90px;
+      height: 90px;
+      display: grid;
+      grid-template-columns: repeat(3, 30px);
+      grid-template-rows: repeat(3, 30px);
+    }
+    .face3d .sticker {
+      border: 1px solid #999;
+      width: 30px;
+      height: 30px;
+    }
+
+    /* Position each face in 3D */
+    .face3d.U { transform: rotateX(90deg) translateZ(45px); }
+    .face3d.D { transform: rotateX(-90deg) translateZ(45px); }
+    .face3d.F { transform: rotateY(0deg) translateZ(45px); }
+    .face3d.B { transform: rotateY(180deg) translateZ(45px); }
+    .face3d.L { transform: rotateY(-90deg) translateZ(45px); }
+    .face3d.R { transform: rotateY(90deg) translateZ(45px); }
+  </style>
+</head>
+<body>
+  <h1>Rubik's Cube Cross Solver</h1>
+  <p>
+    Scramble with <strong>white on top</strong> and <strong>green in front</strong>.
+    (Solution places the white cross on the <strong>D face</strong>.)
+  </p>
+
+  <!-- ========== Mode Section ========== -->
+  <div class="mode-section">
+    <label>
+      <input type="radio" name="inputMode" id="modeScramble" value="scramble" checked>
+      Scramble Mode
+    </label>
+    <label>
+      <input type="radio" name="inputMode" id="modeCross" value="cross">
+      Cross Location Mode
+    </label>
+  </div>
+
+  <!-- ========== Scramble Input Section ========== -->
+  <div id="scrambleInputSection">
+    <label for="scramble"><strong>Scramble:</strong></label>
+    <input type="text" id="scramble" placeholder="e.g., R U R' U2" />
+  </div>
+
+  <!-- ========== Cross Location Section ========== -->
+  <div id="crossInputSection">
+    <div class="edge-input-table">
+      <div class="edge-row">
+        <div class="edge-cell">
+          <label class="wg-label">W/G edge</label>
+        </div>
+        <div class="edge-cell">
+          <input type="text" id="wBox" class="edge-box" placeholder="e.g., UF">
+        </div>
+      </div>
+
+      <div class="edge-row">
+        <div class="edge-cell">
+          <label class="wo-label">W/O edge</label>
+        </div>
+        <div class="edge-cell">
+          <input type="text" id="xBox" class="edge-box" placeholder="e.g., UL">
+        </div>
+      </div>
+
+      <div class="edge-row">
+        <div class="edge-cell">
+          <label class="wb-label">W/B edge</label>
+        </div>
+        <div class="edge-cell">
+          <input type="text" id="yBox" class="edge-box" placeholder="e.g., UB">
+        </div>
+      </div>
+
+      <div class="edge-row">
+        <div class="edge-cell">
+          <label class="wr-label">W/R edge</label>
+        </div>
+        <div class="edge-cell">
+          <input type="text" id="zBox" class="edge-box" placeholder="e.g., UR">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button onclick="solveCross()">Solve Cross</button>
+  <button onclick="resetScramble()">Reset</button>
+  <button id="randomBtn" onclick="generateScramble()">Random Scramble</button>
+
+  <div id="output"></div>
+
+  <!-- ========== 2D Cube Net ========== -->
+  <div class="cube" id="cube"></div>
+
+  <!-- ========== 3D Cube ========== -->
+  <div class="cube3d-container" onmousedown="startDrag(event)">
+    <div class="cube3d" id="cube3d">
+      <div class="face3d U"></div>
+      <div class="face3d D"></div>
+      <div class="face3d F"></div>
+      <div class="face3d B"></div>
+      <div class="face3d L"></div>
+      <div class="face3d R"></div>
+    </div>
+  </div>
+
+  <script>
+    /************************************************************
+     * 0) Mode Toggle
+     ************************************************************/
+    const scrambleSection = document.getElementById("scrambleInputSection");
+    const crossSection    = document.getElementById("crossInputSection");
+
+    const scrambleInput   = document.getElementById("scramble");
+    const randomBtn       = document.getElementById("randomBtn");
+
+    const wBox = document.getElementById("wBox");
+    const xBox = document.getElementById("xBox");
+    const yBox = document.getElementById("yBox");
+    const zBox = document.getElementById("zBox");
+
+    function updateMode() {
+      const modeScramble = document.getElementById("modeScramble").checked;
+      if (modeScramble) {
+        // Show scramble, hide cross
+        scrambleSection.style.display = "block";
+        crossSection.style.display    = "none";
+        randomBtn.style.display       = "inline-block"; // visible
+      } else {
+        // Show cross, hide scramble
+        scrambleSection.style.display = "none";
+        crossSection.style.display    = "block";
+        randomBtn.style.display       = "none"; // hide random in location mode
+      }
+    }
+
+    document.getElementById("modeScramble").addEventListener("change", updateMode);
+    document.getElementById("modeCross").addEventListener("change", updateMode);
+    updateMode(); // init
+
+    /************************************************************
+     * 1) CROSS / SCRAMBLE CONFIG
+     ************************************************************/
+    const crossColor = { w: 'green', x: 'orange', y: 'blue', z: 'red' };
+    const crossPieces = { w: 'UF', x: 'UL', y: 'UB', z: 'UR' };
+
+    // For each cross piece, first sticker is white, second is side color
+    const edgeFacelets = {
+      UF: ['U8', 'F2'], FU: ['F2', 'U8'],
+      UL: ['U4', 'L2'], LU: ['L2', 'U4'],
+      UB: ['U2', 'B2'], BU: ['B2', 'U2'],
+      UR: ['U6', 'R2'], RU: ['R2', 'U6'],
+
+      DF: ['D2', 'F8'], FD: ['F8', 'D2'],
+      DL: ['D4', 'L8'], LD: ['L8', 'D4'],
+      DB: ['D8', 'B8'], BD: ['B8', 'D8'],
+      DR: ['D6', 'R8'], RD: ['R8', 'D6'],
+
+      FR: ['F6', 'R4'], RF: ['R4', 'F6'],
+      FL: ['F4', 'L6'], LF: ['L6', 'F4'],
+      BR: ['B4', 'R6'], RB: ['R6', 'B4'],
+      BL: ['B6', 'L4'], LB: ['L4', 'B6']
+    };
+
+    let solutionTable = {};
+
+    fetch("./complete_cross_solutions.json")
+      .then(r => r.json())
+      .then(bigData => {
+        const arr = bigData.results || bigData; // handle {results: [...]}, or array
+        arr.forEach(row => {
+          let key = `${row.w}_${row.x}_${row.y}_${row.z}`;
+          solutionTable[key] = row.Solution;
+        });
+        console.log("Solutions loaded:", Object.keys(solutionTable).length);
+      })
+      .catch(err => console.error("JSON load error:", err));
+
+    /************************************************************
+     * 2) MOVE TABLES
+     ************************************************************/
+    const MOVE_TABLES = {
+      "U": {"UF":"UL","UL":"UB","UB":"UR","UR":"UF","FU":"LU","LU":"BU","BU":"RU","RU":"FU"},
+      "U'":{"UF":"UR","UR":"UB","UB":"UL","UL":"UF","FU":"RU","RU":"BU","BU":"LU","LU":"FU"},
+      "U2":{"UF":"UB","UB":"UF","UL":"UR","UR":"UL","FU":"BU","BU":"FU","LU":"RU","RU":"LU"},
+
+      "D": {"DF":"DR","DR":"DB","DB":"DL","DL":"DF","FD":"RD","RD":"BD","BD":"LD","LD":"FD"},
+      "D'":{"DF":"DL","DL":"DB","DB":"DR","DR":"DF","FD":"LD","LD":"BD","BD":"RD","RD":"FD"},
+      "D2":{"DF":"DB","DB":"DF","DR":"DL","DL":"DR","FD":"BD","BD":"FD","RD":"LD","LD":"RD"},
+
+      "F": {"FU":"FR","FR":"FD","FD":"FL","FL":"FU","UF":"RF","RF":"DF","DF":"LF","LF":"UF"},
+      "F'":{"FU":"FL","FL":"FD","FD":"FR","FR":"FU","UF":"LF","LF":"DF","DF":"RF","RF":"UF"},
+      "F2":{"FU":"FD","FD":"FU","FR":"FL","FL":"FR","UF":"DF","DF":"UF","RF":"LF","LF":"RF"},
+
+      "B": {"BU":"BL","BL":"BD","BD":"BR","BR":"BU","UB":"LB","LB":"DB","DB":"RB","RB":"UB"},
+      "B'":{"BU":"BR","BR":"BD","BD":"BL","BL":"BU","UB":"RB","RB":"DB","DB":"LB","LB":"UB"},
+      "B2":{"BU":"BD","BD":"BU","BR":"BL","BL":"BR","UB":"DB","DB":"UB","RB":"LB","LB":"RB"},
+
+      "R": {"RU":"RB","RB":"RD","RD":"RF","RF":"RU","UR":"BR","BR":"DR","DR":"FR","FR":"UR"},
+      "R'":{"RU":"RF","RF":"RD","RD":"RB","RB":"RU","UR":"FR","FR":"DR","DR":"BR","BR":"UR"},
+      "R2":{"RU":"RD","RD":"RU","RF":"RB","RB":"RF","UR":"DR","DR":"UR","FR":"BR","BR":"FR"},
+
+      "L": {"LU":"LF","LF":"LD","LD":"LB","LB":"LU","UL":"FL","FL":"DL","DL":"BL","BL":"UL"},
+      "L'":{"LU":"LB","LB":"LD","LD":"LF","LF":"LU","UL":"BL","BL":"DL","DL":"FL","FL":"UL"},
+      "L2":{"LU":"LD","LD":"LU","LF":"LB","LB":"LF","UL":"DL","DL":"UL","FL":"BL","BL":"FL"}
+    };
+
+    /************************************************************
+     * 3) CORE LOGIC
+     ************************************************************/
+    function applyMove(state, move) {
+      const perm = MOVE_TABLES[move];
+      let newState = {};
+      for (let key in state) {
+        newState[key] = perm[state[key]] || state[key];
+      }
+      return newState;
+    }
+
+    function applyScramble(state, scramble) {
+      const moves = scramble.replace(/\s+/g, '').match(/([URFDLB]2?'?)/g) || [];
+      for (const move of moves) {
+        if (!(move in MOVE_TABLES)) {
+          throw new Error("Invalid move: " + move);
+        }
+        state = applyMove(state, move);
+      }
+      return state;
+    }
+
+    function updateCubeNet(state) {
+      document.querySelectorAll('.sticker').forEach(el => el.className = 'sticker');
+
+      const centers = {
+        U5: 'white', D5: 'yellow',
+        F5: 'green', B5: 'blue',
+        R5: 'red',   L5: 'orange'
+      };
+      for (let id in centers) {
+        document.querySelectorAll(`#${id}`).forEach(el => {
+          el.classList.add(centers[id]);
+        });
+      }
+
+      for (let label in state) {
+        const pos = state[label];
+        const facelets = edgeFacelets[pos];
+        if (!facelets) continue;
+        document.querySelectorAll(`#${facelets[0]}`).forEach(el => {
+          el.classList.add('white');
+        });
+        document.querySelectorAll(`#${facelets[1]}`).forEach(el => {
+          el.classList.add(crossColor[label]);
+        });
+      }
+    }
+
+    function normalizeScramble(raw) {
+      const sequence = raw.replace(/\s+/g, '').match(/([URFDLB])('?|2)?/g);
+      if (!sequence) return '';
+      const optimized = [];
+      let i = 0;
+      while (i < sequence.length) {
+        const face = sequence[i][0];
+        let count = 0;
+        while (i < sequence.length && sequence[i][0] === face) {
+          const mod = sequence[i].slice(1);
+          if (mod === "'") count += 3;
+          else if (mod === "2") count += 2;
+          else count += 1;
+          i++;
+        }
+        count %= 4;
+        if (count === 1) optimized.push(face);
+        else if (count === 2) optimized.push(face + '2');
+        else if (count === 3) optimized.push(face + "'");
+      }
+      return optimized.join(' ');
+    }
+
+    /************************************************************
+     * 4) SOLVE CROSS (with 2 modes)
+     ************************************************************/
+    function solveCross() {
+      const scrambleMode = document.getElementById("modeScramble").checked;
+      let finalState = { ...crossPieces };
+      let outputText = "";
+
+      if (scrambleMode) {
+        // SCRAMBLE MODE
+        let rawInput = scrambleInput.value.trim();
+        let normalized = normalizeScramble(rawInput);
+        scrambleInput.value = normalized;
+
+        if (!normalized.match(/^([URFDLB]2?'?)(\s([URFDLB]2?'?))*$/)) {
+          alert("Scramble invalid");
+          return;
+        }
+
+        finalState = applyScramble({ ...crossPieces }, normalized);
+
+        // Auto-fill the location boxes with the final positions
+        wBox.value = finalState.w;
+        xBox.value = finalState.x;
+        yBox.value = finalState.y;
+        zBox.value = finalState.z;
+
+        // Show cross piece locations
+        const crossSequence = ['w','x','y','z'];
+        const coloredParts = crossSequence.map(label => {
+          const pos = finalState[label];
+          const color = crossColor[label];
+          return `<span style=\"color:${color};\">${pos}</span>`;
+        });
+        outputText = `Current cross state: (${coloredParts.join(', ')})`;
+
+      } else {
+        // LOCATION MODE
+        let wVal = wBox.value.trim().toUpperCase();
+        let xVal = xBox.value.trim().toUpperCase();
+        let yVal = yBox.value.trim().toUpperCase();
+        let zVal = zBox.value.trim().toUpperCase();
+
+        // Must be exactly 2 letters from [U,D,F,B,L,R]
+        let pattern = /^[UDFBLR]{2}$/;
+        if (!pattern.test(wVal) || !pattern.test(xVal)
+         || !pattern.test(yVal) || !pattern.test(zVal)) {
+          alert("Each piece location must be 2 letters from [U,D,F,B,L,R], e.g. UF, UL, UB, UR");
+          return;
+        }
+
+        // Additional checks:
+
+	// 0) Must not be invalid edge types (e.g., UU, UD, LR, etc.)
+	const invalidEdgeSet = new Set([
+	  'UU', 'DD', 'LL', 'RR', 'FF', 'BB',
+	  'UD', 'DU', 'LR', 'RL', 'FB', 'BF'
+	]);
+	
+	const vals = [wVal, xVal, yVal, zVal];  // Define this once here
+	
+	for (let val of vals) {
+	  if (invalidEdgeSet.has(val)) {
+	    alert(`${val} is not a valid edge — same face or opposite face combination.`);
+	    return;
+	  }
+	}
+	
+	// 1) No two boxes can be the same
+	let setCheck = new Set(vals);
+	if (setCheck.size < 4) {
+	  alert("Two or more edges have the same location. That is invalid.");
+	  return;
+	}
+	
+	// 2) No reversed pairs among them
+	for (let i = 0; i < vals.length; i++) {
+	  for (let j = i + 1; j < vals.length; j++) {
+	    if (isReversed(vals[i], vals[j])) {
+	      alert(`Edges ${vals[i]} and ${vals[j]} are reverses, meaning the same piece. Invalid.`);
+	      return;
+	    }
+	  }
+	}
+
+        finalState = { w: wVal, x: xVal, y: yVal, z: zVal };
+	const seq = ['w','x','y','z'];
+	const coloredParts = seq.map(label => {
+	  const pos = finalState[label];
+	  const color = crossColor[label];
+	  return `<span style="color:${color};">${pos}</span>`;
+	});
+	outputText = `Current cross state: (${coloredParts.join(', ')})`;
+
+      }
+
+      // => Update net
+      updateCubeNet(finalState);
+
+      // => Lookup solution
+      const key = `${finalState.w}_${finalState.x}_${finalState.y}_${finalState.z}`;
+      const finalSolution = solutionTable[key];
+      if (finalSolution) {
+        outputText += `<br>Solution: <strong>${finalSolution}</strong>`;
+      } else {
+        outputText += `<br>No solution found for: ${key}`;
+      }
+
+      document.getElementById("output").innerHTML = outputText;
+    }
+
+    // Helper: check if a is the reverse of b (like 'UF' vs 'FU')
+    function isReversed(a, b) {
+      return a[0] === b[1] && a[1] === b[0];
+    }
+
+    /************************************************************
+     * 5) RESET & GENERATE
+     ************************************************************/
+    function resetScramble() {
+      scrambleInput.value = '';
+      wBox.value = '';
+      xBox.value = '';
+      yBox.value = '';
+      zBox.value = '';
+
+      const baseState = { ...crossPieces };
+      updateCubeNet(baseState);
+
+      const crossSequence = ['w','x','y','z'];
+      const coloredParts = crossSequence.map(label => {
+        const pos = baseState[label];
+        const color = crossColor[label];
+        return `<span style=\"color:${color};\">${pos}</span>`;
+      });
+      document.getElementById("output").innerHTML =
+        `Current cross state: (${coloredParts.join(', ')})`;
+    }
+
+    function generateScramble() {
+      const faces = ['U','D','F','B','R','L'];
+      const mods = ['', "'", '2'];
+      let scramble = [];
+      let lastFace = '';
+      while (scramble.length < 20) {
+        let f = faces[Math.floor(Math.random() * 6)];
+        if (f === lastFace) continue;
+        lastFace = f;
+        let m = mods[Math.floor(Math.random() * mods.length)];
+        scramble.push(f + m);
+      }
+      scrambleInput.value = scramble.join(' ');
+    }
+
+    /************************************************************
+     * 6) BUILD 2D NET & 3D CUBE
+     ************************************************************/
+    const netContainer = document.getElementById('cube');
+    ['U','L','F','R','B','D'].forEach(face => {
+      const faceDiv = document.createElement('div');
+      faceDiv.className = `face ${face}`;
+      for (let i = 1; i <= 9; i++) {
+        const st = document.createElement('div');
+        st.className = 'sticker';
+        st.id = face + i;
+        faceDiv.appendChild(st);
+      }
+      netContainer.appendChild(faceDiv);
+    });
+
+    ['U','D','F','B','L','R'].forEach(face => {
+      const face3D = document.querySelector(`.face3d.${face}`);
+      for (let i = 1; i <= 9; i++) {
+        const st = document.createElement('div');
+        st.className = 'sticker';
+        st.id = face + i;
+        face3D.appendChild(st);
+      }
+    });
+
+    /************************************************************
+     * 7) DRAG LOGIC
+     ************************************************************/
+    let isDragging = false;
+    let startX, startY;
+    let rotateX = -30, rotateY = -30;
+
+    const cube3d = document.getElementById('cube3d');
+    function startDrag(e) {
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      document.addEventListener('mousemove', drag);
+      document.addEventListener('mouseup', stopDrag);
+    }
+    function drag(e) {
+      if (!isDragging) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      rotateY += dx * 0.5;
+      rotateX -= dy * 0.5;
+      cube3d.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      startX = e.clientX;
+      startY = e.clientY;
+    }
+    function stopDrag() {
+      isDragging = false;
+      document.removeEventListener('mousemove', drag);
+      document.removeEventListener('mouseup', stopDrag);
+    }
+
+    // Initialize
+    resetScramble();
+  </script>
+</body>
+</html>
