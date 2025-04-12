@@ -150,9 +150,21 @@
     .face3d.B { transform: rotateY(180deg) translateZ(45px); }
     .face3d.L { transform: rotateY(-90deg) translateZ(45px); }
     .face3d.R { transform: rotateY(90deg) translateZ(45px); }
+html, body {
+	height: 100%;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+main {
+	flex: 1;
+}
+
   </style>
 </head>
 <body>
+<main>
   <h1>Rubik's Cube Cross Solver</h1>
   <p>
     Scramble with <strong>white on top</strong> and <strong>green in front</strong>.
@@ -627,5 +639,12 @@
     // Initialize
     resetScramble();
   </script>
+</main>
+<footer style="text-align: center; margin-top: 50px; font-size: 0.9em; color: #666;">
+  © 2025 mwhx10 | Cross Solver V2 | Powered by heavy look-ahead  
+  <br>
+  Visualizer powered by <a href="https://js.cubing.net/cubing/twisty/" target="_blank" rel="noopener noreferrer">Twisty Player</a>  
+  | Cross database by <a href="https://www.reddit.com/user/Balbalit" target="_blank" rel="noopener noreferrer">u/Balbalit</a>
+</footer>	
 </body>
 </html>
