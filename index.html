@@ -251,7 +251,7 @@ main {
 <div id="twisty-container" style="margin-top: 30px; height: 300px; display: flex; justify-content: center; align-items: center;">
   <twisty-player id="twisty" puzzle="3x3x3" control-panel="none" background="none"></twisty-player>
 </div>
-<twisty-player alg="R U R' U R U2' R'"></twisty-player>
+
 	
   <!-- ========== 2D Cube Net ========== -->
   <div class="cube" id="cube"></div>
@@ -566,7 +566,7 @@ main {
       document.getElementById("output").innerHTML = outputText;
     }
 
-      // Twisty
+      // Twisty player
       function showScrambleAndSolution(scramble, solution) {
       const player = document.getElementById("twisty");
       player.setAttribute("experimental-setup-alg", scramble);
