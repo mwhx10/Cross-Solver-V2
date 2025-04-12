@@ -164,8 +164,9 @@
   <button onclick="solveCross()">Solve Cross</button>
   <button onclick="resetScramble()">Reset</button>
   <button id="randomBtn" onclick="generateScramble()">Random Scramble</button>
+  <button id="randomLocBtn" onclick="generateRandomLocations()">Random Locations</button>
 
-  <div id="output"></div>
+<div id="output"></div>
 
   <!-- ========== Twisty Player ========== -->
 <div id="twisty-container" style="margin-top: 30px; height: 300px; display: flex; justify-content: center; align-items: center;">
@@ -181,7 +182,8 @@
 
     const scrambleInput   = document.getElementById("scramble");
     const randomBtn       = document.getElementById("randomBtn");
-
+    const randomLocBtn    = document.getElementById("randomLocBtn");
+	  
     const wBox = document.getElementById("wBox");
     const xBox = document.getElementById("xBox");
     const yBox = document.getElementById("yBox");
@@ -189,7 +191,7 @@
 
     let currentMode = "scramble"; // Global variable to track current mode
 	  
-	function updateMode() {
+    function updateMode() {
   	const modeScramble = document.getElementById("modeScramble").checked;
   	let newMode = modeScramble ? "scramble" : "cross";
 	
@@ -202,12 +204,15 @@
   	if (modeScramble) {
     	scrambleSection.style.display = "block";
     	crossSection.style.display    = "none";
-    	randomBtn.style.display       = "inline-block"; // visible
-  	} else {
+    	randomBtn.style.display       = "inline-block"; // random scramble button visible
+        randomLocBtn.style.display    = "none"; // hide random location button
+  
+	} else {
     	scrambleSection.style.display = "none";
     	crossSection.style.display    = "block";
     	randomBtn.style.display       = "none"; // hide random in location mode
-  	}
+  	randomLocBtn.style.display    = "inline-block";
+	}
 	}
 
 
