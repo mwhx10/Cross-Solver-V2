@@ -488,22 +488,26 @@ function solveCross() {
 
       // Twisty player
       // Scramble mode Twisty player  
-	function showScrambleAndSolution(scramble, solution) {
+      function showScrambleAndSolution(scramble, solution) {
 	  const player = document.getElementById("twisty");
 	  player.setAttribute("experimental-setup-alg", scramble.trim());
 	  player.setAttribute("alg", solution.trim());
 	}
 
       // Cross location mode Twisty player  
-	function showSolutionOnly(solution) {
-	  const player = document.getElementById("twisty");
-	  const reversed = reverseAlgorithm(solution.trim()); // new line
-  	  const combined = `[z2 ${reversed}] ${solution.trim()}`;
-	  // Example: If solution is "R U R' U2", reversed might be "U2' R U' R'"
-	  player.setAttribute("experimental-setup-alg", combined);
-	  player.setAttribute("alg", solution.trim());
+      function showSolutionOnly(solution) {
+  	const player = document.getElementById("twisty");
+	
+  	// Step 1: Generate the reversed version of the solution
+  	const reversed = reverseAlgorithm(solution.trim());
+	
+  	// Step 2: Add a z2 rotation before the reversed sequence for orientation alignment
+  	const setupAlg = `z2 ${reversed}`;
+	
+  	// Step 3: Set the Twisty Player attributes
+  	player.setAttribute("experimental-setup-alg", setupAlg);     // pre-scramble (reverse path)
+  	player.setAttribute("alg", solution.trim());                 // actual solution
 	}
-
 	  
     // Helper: check if a is the reverse of b (like 'UF' vs 'FU')
     function isReversed(a, b) {
