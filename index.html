@@ -50,8 +50,7 @@
     }
     #output {
       margin-top: 15px;
-      font-weight: bold
-      min-height: 4em;
+      font-weight: bold;
     }
     .mode-section {
       margin-bottom: 10px;
@@ -513,11 +512,11 @@ function solveCross() {
 
 	// Properly reset Twisty Player to solved state
 	const player = document.getElementById("twisty");
-	player.style.display = "none";  // hide temporarily to force re-render
+	//player.style.display = "none";  // hide temporarily to force re-render
 	player.setAttribute("experimental-setup-alg", ""); // explicitly blank
 	player.setAttribute("alg", "");                    // solved cube
 	setTimeout(() => {
-	player.style.display = "block"; // show again after brief pause
+	//  player.style.display = "block"; // show again after brief pause
 	}, 50);
 
 	    
@@ -539,9 +538,8 @@ function solveCross() {
     }
 
 
-// Initialize
-resetScramble();
-	    
+    // Initialize
+    resetScramble();
   </script>
 </main>
 <footer style="text-align: center; margin-top: 50px; font-size: 0.9em; color: #666;">
