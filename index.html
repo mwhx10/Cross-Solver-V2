@@ -510,13 +510,15 @@ function solveCross() {
       document.getElementById("output").innerHTML =
         `Current cross state: (${coloredParts.join(', ')})`;
 
-	// Properly reset Twisty Player (force rerender)
+	// Properly reset Twisty Player to solved state
 	const player = document.getElementById("twisty");
-	player.removeAttribute("alg");
-	player.removeAttribute("experimental-setup-alg");
-	player.setAttribute("experimental-setup-alg", " "); // set solved state to refresh view
-	player.setAttribute("alg", " "); // set solved state to refresh view
+	player.style.display = "none";  // hide temporarily to force re-render
+	player.setAttribute("experimental-setup-alg", ""); // explicitly blank
+	player.setAttribute("alg", "");                    // solved cube
 	setTimeout(() => {
+	  player.style.display = "block"; // show again after brief pause
+	}, 50);
+
 	    
     }
 
