@@ -194,13 +194,14 @@
         scrambleSection.style.display = "block";
         crossSection.style.display    = "none";
         randomBtn.style.display       = "inline-block"; // visible
+	resetScramble();  // <-- This line resets everything when mode changes
       } else {
         // Show cross, hide scramble
         scrambleSection.style.display = "none";
         crossSection.style.display    = "block";
         randomBtn.style.display       = "none"; // hide random in location mode
       }
-    resetScramble();  // <-- This line resets everything when mode changes
+    
     }
 
     document.getElementById("modeScramble").addEventListener("change", updateMode);
