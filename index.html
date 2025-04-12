@@ -92,6 +92,19 @@
       color: red;
     }
 
+/* Default light mode colors for current cross output */
+.cross-green  { color: green; }
+.cross-orange { color: orange; }
+.cross-blue   { color: blue; }
+.cross-red    { color: red; }
+
+/* Dark mode override */
+body.dark .cross-green  { color: lightgreen; }
+body.dark .cross-orange { color: gold; }
+body.dark .cross-blue   { color: lightskyblue; }
+body.dark .cross-red    { color: pink; }
+
+	  
 	/* ========== DARK MODE ========== */
 	body.dark {	
   	background-color: #121212;
@@ -417,11 +430,17 @@ function solveCross() {
 
         // Show cross piece locations
         const crossSequence = ['w','x','y','z'];
-        const coloredParts = crossSequence.map(label => {
-          const pos = finalState[label];
-          const color = crossColor[label];
-          return `<span style=\"color:${color};\">${pos}</span>`;
-        });
+	const coloredParts = crossSequence.map(label => {
+	  const pos = finalState[label];
+	  const colorClass = {
+	    w: "cross-green",
+ 	   x: "cross-orange",
+ 	   y: "cross-blue",
+ 	   z: "cross-red"
+	  }[label];
+	  return `<span class="${colorClass}">${pos}</span>`;
+	});
+
         outputText = `Current cross state: (${coloredParts.join(', ')})`;
 
       } else {
