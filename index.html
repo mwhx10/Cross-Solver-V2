@@ -187,33 +187,7 @@
         --cross-red: lightcoral;
       }
 
-      .dark-mode-container {
-        position: absolute;
-        top: 10px;
-        right: 20px;
-      }
-      @media (max-width: 600px) {
-        .dark-mode-container {
-          top: 5px;     /* adjust the top position as needed */
-          right: 10px;  /* adjust the right position as needed */
-        }
-      }
-/* Container for the dark mode toggle */
-.dark-mode-container {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-}
 
-/* Media query for mobile devices */
-@media (max-width: 600px) {
-  .dark-mode-container {
-    top: 5px;     /* tweak as needed */
-    right: 10px;  /* tweak as needed */
-  }
-}
-
-/* Existing dark mode toggle styles (switch) remain unchanged */
 .switch {
   position: relative;
   display: inline-block;
@@ -266,14 +240,11 @@
   <body>
     <main>
       <h1>Rubik's Cube Cross Solver</h1>
-
-      <div class="dark-mode-container">
-        <label class="switch">
-          <input type="checkbox" id="themeToggleCheckbox">
-          <span class="slider"></span>
-        </label>
-      </div>
-
+      <!-- Dark Mode Toggle added directly after the title -->
+      <label class="switch">
+        <input type="checkbox" id="themeToggleCheckbox">
+        <span class="slider"></span>
+      </label>
 
       <p>
         Scramble with <strong>white on top</strong> and
