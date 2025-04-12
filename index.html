@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- ========== Twisty Player use========== -->
+  <script src="https://cdn.cubing.net/js/cubing/twisty.js"></script>
+	
   <meta charset="UTF-8" />
   <title>Rubik's Cube Cross Solver</title>
   <style>
@@ -243,6 +246,11 @@ main {
   <button id="randomBtn" onclick="generateScramble()">Random Scramble</button>
 
   <div id="output"></div>
+
+  <!-- ========== Twisty Player ========== -->
+  <div id="twisty-container" style="margin-top: 30px;">
+    <twisty-player id="twisty" puzzle="3x3x3" control-panel="none" background="none"></twisty-player>
+  </div>
 
   <!-- ========== 2D Cube Net ========== -->
   <div class="cube" id="cube"></div>
@@ -535,15 +543,41 @@ main {
       // => Lookup solution
       const key = `${finalState.w}_${finalState.x}_${finalState.y}_${finalState.z}`;
       const finalSolution = solutionTable[key];
-      if (finalSolution) {
-        outputText += `<br>Solution: <strong>${finalSolution}</strong>`;
-      } else {
-        outputText += `<br>No solution found for: ${key}`;
-      }
+	if (finalSolution) {
+	  outputText += `<br>Solution: <strong>${finalSolution}</strong>`;
+
+	  if (scrambleMode) {
+	    showScrambleAndSolution(normalized, finalSolution);
+	  } else {
+	    showSolutionOnly(finalSolution);
+	  }
+
+	} else {
+	  outputText += `<br>No solution found for: ${key}`;
+
+	  // Clear visual if no solution
+	  const player = document.getElementById("twisty");
+	  player.removeAttribute("alg");
+	  player.removeAttribute("experimental-setup-alg");
+	}
+
 
       document.getElementById("output").innerHTML = outputText;
     }
 
+      // Twisty
+      function showScrambleAndSolution(scramble, solution) {
+      const player = document.getElementById("twisty");
+      player.setAttribute("experimental-setup-alg", scramble);
+      player.setAttribute("alg", solution);
+      }
+	
+      function showSolutionOnly(solution) {
+      const player = document.getElementById("twisty");
+      player.setAttribute("alg", solution);
+      }
+
+	  
     // Helper: check if a is the reverse of b (like 'UF' vs 'FU')
     function isReversed(a, b) {
       return a[0] === b[1] && a[1] === b[0];
