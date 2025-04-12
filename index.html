@@ -571,14 +571,8 @@ outputText = `Current cross state: (${getColoredCrossText(finalState)})`;
       const baseState = { ...crossPieces };
       updateCubeNet(baseState);
 
-      const crossSequence = ['w','x','y','z'];
-      const coloredParts = crossSequence.map(label => {
-        const pos = baseState[label];
-        const color = crossColor[label];
-        return `<span style=\"color:${color};\">${pos}</span>`;
-      });
-	document.getElementById("output").innerHTML =
-	  `Current cross state: (${coloredParts.join(', ')})<br>Solution: Done`;
+document.getElementById("output").innerHTML =
+  `Current cross state: (${getColoredCrossText(baseState)})<br>Solution: Done`;
 
 
 	// Reset Twisty Player to solved cube properly
