@@ -515,10 +515,11 @@ function solveCross() {
 	player.style.display = "none"; // temporarily hide
 	player.removeAttribute("alg");
 	player.removeAttribute("experimental-setup-alg");
+	player.setAttribute("experimental-setup-alg", " "); // set solved state to refresh view
 	player.setAttribute("alg", " "); // set solved state to refresh view
 	setTimeout(() => {
   	player.style.display = "block"; // restore visibility after delay
-	}, 50);
+	}, 0);
 	    
     }
 
