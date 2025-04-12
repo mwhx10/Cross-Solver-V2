@@ -510,10 +510,15 @@ function solveCross() {
       document.getElementById("output").innerHTML =
         `Current cross state: (${coloredParts.join(', ')})`;
 
-	// Also clear Twisty Player
+	// Properly reset Twisty Player (force rerender)
 	const player = document.getElementById("twisty");
+	player.style.display = "none"; // temporarily hide
 	player.removeAttribute("alg");
 	player.removeAttribute("experimental-setup-alg");
+	player.setAttribute("alg", " "); // set solved state to refresh view
+	setTimeout(() => {
+  	player.style.display = "block"; // restore visibility after delay
+	}, 50);
 	    
     }
 
