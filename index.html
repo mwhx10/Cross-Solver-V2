@@ -445,15 +445,16 @@ main {
     /************************************************************
      * 4) SOLVE CROSS (with 2 modes)
      ************************************************************/
-    function solveCross() {
-      const scrambleMode = document.getElementById("modeScramble").checked;
-      let finalState = { ...crossPieces };
-      let outputText = "";
+function solveCross() {
+  const scrambleMode = document.getElementById("modeScramble").checked;
+  let finalState = { ...crossPieces };
+  let outputText = "";
+  let normalized = "";  // ✅ ← this is the fix
 
       if (scrambleMode) {
         // SCRAMBLE MODE
         let rawInput = scrambleInput.value.trim();
-        let normalized = normalizeScramble(rawInput);
+        normalized = normalizeScramble(rawInput);
         scrambleInput.value = normalized;
 
         if (!normalized.match(/^([URFDLB]2?'?)(\s([URFDLB]2?'?))*$/)) {
