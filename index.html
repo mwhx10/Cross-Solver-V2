@@ -193,9 +193,13 @@
     <main>
       <h1>Rubik's Cube Cross Solver</h1>
 
-      <div style="position: absolute; top: 10px; right: 20px;">
-        <button id="themeToggle" onclick="toggleTheme()">🌙</button>
+      <div class="dark-mode-container">
+        <label class="switch">
+          <input type="checkbox" id="themeToggleCheckbox">
+          <span class="slider"></span>
+        </label>
       </div>
+
 
       <p>
         Scramble with <strong>white on top</strong> and
