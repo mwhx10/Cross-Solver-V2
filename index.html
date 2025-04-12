@@ -187,6 +187,17 @@
     const yBox = document.getElementById("yBox");
     const zBox = document.getElementById("zBox");
 
+	// Helper: Reset the Twisty Player to a clean state
+	function resetTwistyPlayer() {
+  	const player = document.getElementById("twisty");
+  	player.removeAttribute("experimental-setup-alg");
+  	player.removeAttribute("alg");
+  	player.removeAttribute("experimental-setup-anchor");
+  	if (typeof player.reset === "function") {
+    	player.reset();
+  	}
+	}
+	  
     let currentMode = "scramble"; // Global variable to track current mode
 	  
 	function updateMode() {
@@ -208,6 +219,9 @@
     	crossSection.style.display    = "block";
     	randomBtn.style.display       = "none"; // hide random in location mode
   	}
+	  // Reset the Twisty Player to prevent conflicts when switching modes
+  	resetTwistyPlayer();
+  	resetScramble();  // Also reset the interface
 	}
 
 
