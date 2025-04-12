@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <!-- ========== Twisty Player use========== -->
-  <script src="https://cdn.cubing.net/js/cubing/twisty.js"></script>
+  <script type="module" src="https://cdn.cubing.net/js/cubing/twisty.js"></script>
 	
   <meta charset="UTF-8" />
   <title>Rubik's Cube Cross Solver</title>
@@ -248,9 +248,9 @@ main {
   <div id="output"></div>
 
   <!-- ========== Twisty Player ========== -->
-  <div id="twisty-container" style="margin-top: 30px;">
-    <twisty-player id="twisty" puzzle="3x3x3" control-panel="none" background="none"></twisty-player>
-  </div>
+<div id="twisty-container" style="margin-top: 30px; height: 300px; display: flex; justify-content: center; align-items: center;">
+  <twisty-player id="twisty" puzzle="3x3x3" control-panel="none" background="none"></twisty-player>
+</div>
 
   <!-- ========== 2D Cube Net ========== -->
   <div class="cube" id="cube"></div>
