@@ -173,7 +173,7 @@
   <twisty-player id="twisty" puzzle="3x3x3" control-panel="full" background="none"></twisty-player>
 </div>
 
-  <script>
+<script>
     /************************************************************
      * 0) Mode Toggle
      ************************************************************/
@@ -555,6 +555,47 @@ function solveCross() {
       scrambleInput.value = scramble.join(' ');
     }
 
+function generateRandomLocations() {
+  // List all 24 valid edge locations
+  const allEdges = [
+    "UF", "UR", "UL", "UB",
+    "FU", "FR", "FL", "FD",
+    "DF", "DR", "DL", "DB",
+    "RF", "RU", "RD", "RB",
+    "LU", "LD", "LF", "LB",
+    "BL", "BR", "BU", "BD"
+  ];
+
+  // Shuffle using Fisher-Yates
+  for (let i = allEdges.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [allEdges[i], allEdges[j]] = [allEdges[j], allEdges[i]];
+  }
+
+  // Select 4 edges, skipping reversed pairs
+  let selected = [];
+  for (const edge of allEdges) {
+    // Reverse is e.g. "UF" => "FU"
+    const reversed = edge[1] + edge[0];
+    // Skip if reversed is already in selected
+    if (selected.includes(reversed)) continue;
+    selected.push(edge);
+    if (selected.length === 4) break;
+  }
+
+  // If for some reason we didn't get 4 edges, try again (very unlikely)
+  if (selected.length < 4) {
+    return generateRandomLocations();
+  }
+
+  // Fill the location boxes (without calling solveCross)
+  wBox.value = selected[0];
+  xBox.value = selected[1];
+  yBox.value = selected[2];
+  zBox.value = selected[3];
+
+  // Done! The user can now manually click "Solve Cross."
+}
 
     // Initialize
     resetScramble();
