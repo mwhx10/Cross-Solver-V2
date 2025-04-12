@@ -555,48 +555,7 @@ function solveCross() {
       scrambleInput.value = scramble.join(' ');
     }
 
-    function generateRandomLocations() {
-      // List of all 24 valid edge locations.
-      const validEdges = [
-        "UF", "UR", "UL", "UB",
-        "FU", "FR", "FL", "FD",
-        "DF", "DR", "DL", "DB",
-        "RF", "RU", "RD", "RB",
-        "LU", "LD", "LF", "LB",
-        "BL", "BR", "BU", "BD"
-      ];
 
-      // Shuffle the validEdges array using Fisher-Yates shuffle.
-      for (let i = validEdges.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [validEdges[i], validEdges[j]] = [validEdges[j], validEdges[i]];
-      }
-
-      // Select 4 edges, ensuring no reversed pair appears.
-      let selected = [];
-      for (const edge of validEdges) {
-        // Determine the reverse of the current edge.
-      const reversed = edge[1] + edge[0];
-      // Skip the edge if its reverse is already selected.
-      if (selected.includes(reversed)) continue;
-      // Otherwise, add this edge to the selection.
-      selected.push(edge);
-      if (selected.length === 4) break;
-      }
-
-      // If, for some reason, we didn't pick 4 valid edges,
-      // try again (this is very unlikely with 24 items).
-      if (selected.length < 4) {
-        return generateRandomLocations();
-      }
-
-      // Assign the selected edge values to the respective input boxes.
-      wBox.value = selected[0];
-      xBox.value = selected[1];
-      yBox.value = selected[2];
-      zBox.value = selected[3];
-
-	  
     // Initialize
     resetScramble();
   </script>
