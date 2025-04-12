@@ -187,21 +187,29 @@
     const yBox = document.getElementById("yBox");
     const zBox = document.getElementById("zBox");
 
-    function updateMode() {
-      const modeScramble = document.getElementById("modeScramble").checked;
-      if (modeScramble) {
-        // Show scramble, hide cross
-        scrambleSection.style.display = "block";
-        crossSection.style.display    = "none";
-        randomBtn.style.display       = "inline-block"; // visible
-      } else {
-        // Show cross, hide scramble
-        scrambleSection.style.display = "none";
-        crossSection.style.display    = "block";
-        randomBtn.style.display       = "none"; // hide random in location mode
-      }
-    
-    }
+    let currentMode = "scramble"; // Global variable to track current mode
+	  
+	function updateMode() {
+  	const modeScramble = document.getElementById("modeScramble").checked;
+  	let newMode = modeScramble ? "scramble" : "cross";
+	
+  	// Only reset if the mode has changed
+  	if (newMode !== currentMode) {
+    	resetScramble();  // Reset all inputs and the twisty player
+    	currentMode = newMode;
+  	}
+	
+  	if (modeScramble) {
+    	scrambleSection.style.display = "block";
+    	crossSection.style.display    = "none";
+    	randomBtn.style.display       = "inline-block"; // visible
+  	} else {
+    	scrambleSection.style.display = "none";
+    	crossSection.style.display    = "block";
+    	randomBtn.style.display       = "none"; // hide random in location mode
+  	}
+	}
+
 
     document.getElementById("modeScramble").addEventListener("change", updateMode);
     document.getElementById("modeCross").addEventListener("change", updateMode);
