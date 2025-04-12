@@ -608,6 +608,12 @@ function solveCross() {
       });
       document.getElementById("output").innerHTML =
         `Current cross state: (${coloredParts.join(', ')})`;
+
+	// Also clear Twisty Player
+	const player = document.getElementById("twisty");
+	player.removeAttribute("alg");
+	player.removeAttribute("experimental-setup-alg");
+	    
     }
 
     function generateScramble() {
