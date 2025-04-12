@@ -1,34 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- ========== Twisty Player use========== -->
+  <!-- ========== Twisty Player use ========== -->
   <script src="https://cdn.cubing.net/v0/js/cubing/twisty" type="module"></script>
 
   <meta charset="UTF-8" />
   <title>Rubik's Cube Cross Solver</title>
   <style>
-	body {
-	margin: 0;
-	display: flex;
-	flex-direction: column;
-	height: 100%;
-	}
+    :root {
+      --cross-green: green;
+      --cross-orange: orange;
+      --cross-blue: blue;
+      --cross-red: red;
+    }
 
-	main {
-  	font-family: sans-serif;
-  	max-width: 800px;
-  	margin: 40px auto;
-  	padding: 1em;
-  	flex: 1;
-	}
+    body {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
 
-    /* Container sections for different inputs */
+    main {
+      font-family: sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 1em;
+      flex: 1;
+    }
+
     #scrambleInputSection,
     #crossInputSection {
       margin-bottom: 15px;
     }
 
-    /* Scramble input box is 500px wide */
     #scramble {
       width: 500px;
       padding: 8px;
@@ -36,7 +41,6 @@
       margin-bottom: 10px;
     }
 
-    /* Edge boxes (location mode) are 100px wide */
     .edge-box {
       width: 100px !important;
       font-size: 16px;
@@ -48,102 +52,111 @@
       cursor: pointer;
       margin-right: 10px;
     }
+
     #output {
-	 margin-top: 15px;
-	 font-weight: bold;
-	 min-height: 1.5em;
-	 font-family: monospace;
- 	 font-size: 18px;  /* Or 1.1em, adjust as you like */
+      margin-top: 15px;
+      font-weight: bold;
+      min-height: 1.5em;
+      font-family: monospace;
+      font-size: 18px;
     }
+
     .mode-section {
       margin-bottom: 10px;
     }
 
-    /* Table for the four edge inputs */
     .edge-input-table {
       display: table;
       margin-top: 10px;
       margin-bottom: 10px;
     }
+
     .edge-row {
       display: table-row;
     }
+
     .edge-cell {
       display: table-cell;
       vertical-align: middle;
       padding: 5px 10px;
     }
 
-    /* BOLD, single-color labels for edges */
+    /* Location Labels */
     .wg-label {
       font-weight: bold;
-      color: green;
+      color: var(--cross-green);
     }
+
     .wo-label {
       font-weight: bold;
-      color: orange;
+      color: var(--cross-orange);
     }
+
     .wb-label {
       font-weight: bold;
-      color: blue;
+      color: var(--cross-blue);
     }
+
     .wr-label {
       font-weight: bold;
-      color: red;
+      color: var(--cross-red);
     }
 
-/* Default light mode colors for current cross output */
-.cross-green  { color: green; }
-.cross-orange { color: orange; }
-.cross-blue   { color: blue; }
-.cross-red    { color: red; }
+    /* Cross state output */
+    .cross-green {
+      color: var(--cross-green);
+    }
 
-/* Ensure cross state colored spans are vertically aligned */
-.cross-green,
-.cross-orange,
-.cross-blue,
-.cross-red {
-  display: inline-block;
-  line-height: 1.2;
-  vertical-align: middle;
-  font-weight: bold;
-}
+    .cross-orange {
+      color: var(--cross-orange);
+    }
 
-	  
-/* Dark mode override */
-body.dark .cross-green  { color: lightgreen; }
-body.dark .cross-orange { color: gold; }
-body.dark .cross-blue   { color: lightskyblue; }
-body.dark .cross-red    { color: pink; }
+    .cross-blue {
+      color: var(--cross-blue);
+    }
 
-	  
-	/* ========== DARK MODE ========== */
-	body.dark {	
-  	background-color: #121212;
-  	color: #e0e0e0;
-	}
-	
-	body.dark input,
-	body.dark button {
-  	background-color: #1e1e1e;
-  	color: #e0e0e0;
-  	border: 1px solid #444;
-	}
-	
-	body.dark #output {
-  	color: #9be5ff;
-	}
-	
-	body.dark .wg-label { color: lightgreen; }
-	body.dark .wo-label { color: orange; }
-	body.dark .wb-label { color: lightblue; }
-	body.dark .wr-label { color: pink; }
+    .cross-red {
+      color: var(--cross-red);
+    }
 
-#output span {
-  line-height: 1.2em;
-  vertical-align: middle;
-}
-	  
+    .cross-green,
+    .cross-orange,
+    .cross-blue,
+    .cross-red {
+      display: inline-block;
+      line-height: 1.2;
+      vertical-align: middle;
+      font-weight: bold;
+    }
+
+    #output span {
+      line-height: 1.2em;
+      vertical-align: middle;
+    }
+
+    /* ========== DARK MODE ========== */
+    body.dark {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+
+    body.dark input,
+    body.dark button {
+      background-color: #1e1e1e;
+      color: #e0e0e0;
+      border: 1px solid #444;
+    }
+
+    body.dark #output {
+      color: #9be5ff;
+    }
+
+    body.dark {
+      --cross-green: lightgreen;
+      --cross-orange: gold;
+      --cross-blue: lightskyblue;
+      --cross-red: pink;
+    }
   </style>
 </head>
 <body>
