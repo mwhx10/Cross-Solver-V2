@@ -200,7 +200,6 @@
         crossSection.style.display    = "block";
         randomBtn.style.display       = "none"; // hide random in location mode
       }
-	resetScramble();  // reset on mode switch
     }
 
     document.getElementById("modeScramble").addEventListener("change", updateMode);
@@ -474,20 +473,18 @@ function solveCross() {
     }
 
       // Twisty player
-        // Scramble mode twisty player
 	function showScrambleAndSolution(scramble, solution) {
 	  const player = document.getElementById("twisty");
 	  player.setAttribute("experimental-setup-alg", scramble.trim());
 	  player.setAttribute("alg", solution.trim());
 	}
 
-        // Location mode twisty player
-	function showSolutionOnly(solution) {
-	  const player = document.getElementById("twisty");
-	  player.removeAttribute("experimental-setup-alg"); // make sure no residual scramble
-	  player.setAttribute("experimental-setup-anchor", "end");
-	  player.setAttribute("alg", solution.trim());
-	}
+	
+      function showSolutionOnly(solution) {
+      const player = document.getElementById("twisty");
+      player.setAttribute("alg", solution);
+      }
+
 	  
     // Helper: check if a is the reverse of b (like 'UF' vs 'FU')
     function isReversed(a, b) {
