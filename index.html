@@ -350,7 +350,7 @@ function solveCross() {
   const scrambleMode = document.getElementById("modeScramble").checked;
   let finalState = { ...crossPieces };
   let outputText = "";
-  let normalized = "";  // ✅ ← this is the fix
+  let normalized = "";  // this is the fix
 
       if (scrambleMode) {
         // SCRAMBLE MODE
@@ -457,7 +457,7 @@ function solveCross() {
 	  }
 
 	} else {
-	  outputText += `<br>No solution found for: ${key}`;
+	  outputText += `<br>Solution: <em>not found for: ${key}</em>`;
 
 	  // Clear visual if no solution
 	  const player = document.getElementById("twisty");
@@ -507,8 +507,9 @@ function solveCross() {
         const color = crossColor[label];
         return `<span style=\"color:${color};\">${pos}</span>`;
       });
-      document.getElementById("output").innerHTML =
-        `Current cross state: (${coloredParts.join(', ')})`;
+	document.getElementById("output").innerHTML =
+	  `Current cross state: (${coloredParts.join(', ')})<br>Solution: done`;
+
 
 	// Reset Twisty Player to solved cube properly
 	const player = document.getElementById("twisty");
