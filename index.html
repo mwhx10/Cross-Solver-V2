@@ -98,6 +98,18 @@
 .cross-blue   { color: blue; }
 .cross-red    { color: red; }
 
+/* Ensure cross state colored spans are vertically aligned */
+.cross-green,
+.cross-orange,
+.cross-blue,
+.cross-red {
+  display: inline-block;
+  line-height: 1.2;
+  vertical-align: middle;
+  font-weight: bold;
+}
+
+	  
 /* Dark mode override */
 body.dark .cross-green  { color: lightgreen; }
 body.dark .cross-orange { color: gold; }
@@ -126,7 +138,12 @@ body.dark .cross-red    { color: pink; }
 	body.dark .wo-label { color: orange; }
 	body.dark .wb-label { color: lightblue; }
 	body.dark .wr-label { color: pink; }
-	  	
+
+#output span {
+  line-height: 1.2em;
+  vertical-align: middle;
+}
+	  
   </style>
 </head>
 <body>
@@ -429,19 +446,7 @@ function solveCross() {
         zBox.value = finalState.z;
 
         // Show cross piece locations
-        const crossSequence = ['w','x','y','z'];
-	const coloredParts = crossSequence.map(label => {
-	  const pos = finalState[label];
-	  const colorClass = {
-	    w: "cross-green",
- 	   x: "cross-orange",
- 	   y: "cross-blue",
- 	   z: "cross-red"
-	  }[label];
-	  return `<span class="${colorClass}">${pos}</span>`;
-	});
-
-        outputText = `Current cross state: (${coloredParts.join(', ')})`;
+outputText = `Current cross state: (${getColoredCrossText(finalState)})`;
 
       } else {
         // LOCATION MODE
@@ -493,14 +498,7 @@ function solveCross() {
 	}
 
         finalState = { w: wVal, x: xVal, y: yVal, z: zVal };
-	const seq = ['w','x','y','z'];
-	const coloredParts = seq.map(label => {
-	  const pos = finalState[label];
-	  const color = crossColor[label];
-	  return `<span style="color:${color};">${pos}</span>`;
-	});
-	outputText = `Current cross state: (${coloredParts.join(', ')})`;
-
+outputText = `Current cross state: (${getColoredCrossText(finalState)})`;
       }
 
       // => Update net
@@ -678,6 +676,22 @@ function invertMove(move) {
   if (suffix === "2")  return move;       // R2 -> R2
   // If it’s something else, just return as is
   return move;
+}
+
+
+
+function getColoredCrossText(state) {
+  const colorClass = {
+    w: "cross-green",
+    x: "cross-orange",
+    y: "cross-blue",
+    z: "cross-red"
+  };
+
+  return ['w', 'x', 'y', 'z'].map(label => {
+    const pos = state[label];
+    return `<span class="${colorClass[label]}">${pos}</span>`;
+  }).join(', ');
 }
 
 	
