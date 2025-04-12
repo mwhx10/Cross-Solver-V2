@@ -200,6 +200,7 @@
         crossSection.style.display    = "block";
         randomBtn.style.display       = "none"; // hide random in location mode
       }
+    resetScramble();  // <-- This line resets everything when mode changes
     }
 
     document.getElementById("modeScramble").addEventListener("change", updateMode);
