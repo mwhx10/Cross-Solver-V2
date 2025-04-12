@@ -510,11 +510,12 @@ function solveCross() {
       document.getElementById("output").innerHTML =
         `Current cross state: (${coloredParts.join(', ')})`;
 
-	// Properly reset Twisty Player to solved state
+	// Reset Twisty Player to solved cube properly
 	const player = document.getElementById("twisty");
-	player.setAttribute("experimental-setup-alg", ""); // explicitly blank
-	player.setAttribute("alg", "");                    // solved cube
-	setTimeout(() => {
+	player.setAttribute("experimental-setup-alg", "");
+	player.setAttribute("alg", "");
+	player?.reset?.(); // This line ensures full reset
+
 	    
     }
 
