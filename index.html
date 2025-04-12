@@ -497,11 +497,13 @@ function solveCross() {
       // Cross location mode Twisty player  
 	function showSolutionOnly(solution) {
 	  const player = document.getElementById("twisty");
-    	  // Set the attribute so that the algorithm ends with the solved pattern.
-  	  player.setAttribute("experimental-setup-anchor", "end");
-  	  // Set the solution moves.
-  	  player.setAttribute("alg", solution.trim());
+	  const reversed = reverseAlgorithm(solution.trim()); // new line
+
+	  // Example: If solution is "R U R' U2", reversed might be "U2' R U' R'"
+	  player.setAttribute("experimental-setup-alg", reversed);
+	  player.setAttribute("alg", solution.trim());
 	}
+
 	  
     // Helper: check if a is the reverse of b (like 'UF' vs 'FU')
     function isReversed(a, b) {
@@ -597,6 +599,38 @@ function generateRandomLocations() {
   // Done! The user can now manually click "Solve Cross."
 }
 
+function reverseAlgorithm(algStr) {
+  // Split on spaces to get each move (e.g. ["R", "U", "R'", "U2"])
+  const moves = algStr.trim().split(/\s+/);
+  
+  // Reverse the array
+  moves.reverse(); // e.g. ["U2", "R'", "U", "R"]
+  
+  // Invert each move
+  const inverted = moves.map(move => invertMove(move));
+  
+  // Join back into a string
+  return inverted.join(" ");
+}
+
+// Helper: invert a single move
+// e.g., invertMove("R") => "R'"
+//       invertMove("R'") => "R"
+//       invertMove("R2") => "R2"
+//       invertMove("U") => "U'"
+function invertMove(move) {
+  // Move is something like "R", "R'", "R2"
+  const face = move[0];
+  const suffix = move.slice(1);
+  
+  if (suffix === "")   return face + "'"; // R -> R'
+  if (suffix === "'")  return face;       // R' -> R
+  if (suffix === "2")  return move;       // R2 -> R2
+  // If it’s something else, just return as is
+  return move;
+}
+
+	
     // Initialize
     resetScramble();
   </script>
