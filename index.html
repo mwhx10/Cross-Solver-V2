@@ -1,737 +1,716 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <!-- ========== Twisty Player use ========== -->
-  <script src="https://cdn.cubing.net/v0/js/cubing/twisty" type="module"></script>
+  <head>
+    <!-- ========== Twisty Player use ========== -->
+    <script src="https://cdn.cubing.net/v0/js/cubing/twisty" type="module"></script>
 
-  <meta charset="UTF-8" />
-  <title>Rubik's Cube Cross Solver</title>
-  <style>
-    :root {
-      --cross-green: green;
-      --cross-orange: orange;
-      --cross-blue: blue;
-      --cross-red: red;
-    }
+    <meta charset="UTF-8" />
+    <title>Rubik's Cube Cross Solver</title>
+    <style>
+      :root {
+        --cross-green: green;
+        --cross-orange: orange;
+        --cross-blue: blue;
+        --cross-red: red;
+      }
 
-    body {
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
+      body {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
 
-    main {
-      font-family: sans-serif;
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 1em;
-      flex: 1;
-    }
+      main {
+        font-family: sans-serif;
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 1em;
+        flex: 1;
+      }
 
-    #scrambleInputSection,
-    #crossInputSection {
-      margin-bottom: 15px;
-    }
+      #scrambleInputSection,
+      #crossInputSection {
+        margin-bottom: 15px;
+      }
 
-    #scramble {
-      width: 500px;
-      padding: 8px;
-      font-size: 16px;
-      margin-bottom: 10px;
-    }
+      #scramble {
+        width: 500px;
+        padding: 8px;
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
 
-    .edge-box {
-      width: 100px !important;
-      font-size: 16px;
-    }
+      .edge-box {
+        width: 100px !important;
+        font-size: 16px;
+      }
 
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      margin-right: 10px;
-    }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-right: 10px;
+      }
 
-    #output {
-      margin-top: 15px;
-      font-weight: bold;
-      min-height: 1.5em;
-      font-family: monospace;
-      font-size: 18px;
-    }
+      #output {
+        margin-top: 15px;
+        font-weight: bold;
+        min-height: 1.5em;
+        font-family: monospace;
+        font-size: 18px;
+      }
 
-    .mode-section {
-      margin-bottom: 10px;
-    }
+      .mode-section {
+        margin-bottom: 10px;
+      }
 
-    .edge-input-table {
-      display: table;
-      margin-top: 10px;
-      margin-bottom: 10px;
-    }
+      .edge-input-table {
+        display: table;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
 
-    .edge-row {
-      display: table-row;
-    }
+      .edge-row {
+        display: table-row;
+      }
 
-    .edge-cell {
-      display: table-cell;
-      vertical-align: middle;
-      padding: 5px 10px;
-    }
+      .edge-cell {
+        display: table-cell;
+        vertical-align: middle;
+        padding: 5px 10px;
+      }
 
-    /* Location Labels */
-    .wg-label {
-      font-weight: bold;
-      color: var(--cross-green);
-    }
+      /* Location Labels */
+      .wg-label {
+        font-weight: bold;
+        color: var(--cross-green);
+      }
 
-    .wo-label {
-      font-weight: bold;
-      color: var(--cross-orange);
-    }
+      .wo-label {
+        font-weight: bold;
+        color: var(--cross-orange);
+      }
 
-    .wb-label {
-      font-weight: bold;
-      color: var(--cross-blue);
-    }
+      .wb-label {
+        font-weight: bold;
+        color: var(--cross-blue);
+      }
 
-    .wr-label {
-      font-weight: bold;
-      color: var(--cross-red);
-    }
+      .wr-label {
+        font-weight: bold;
+        color: var(--cross-red);
+      }
 
-    /* Cross state output */
-    .cross-green {
-      color: var(--cross-green);
-    }
+      /* Cross state output */
+      .cross-green {
+        color: var(--cross-green);
+      }
 
-    .cross-orange {
-      color: var(--cross-orange);
-    }
+      .cross-orange {
+        color: var(--cross-orange);
+      }
 
-    .cross-blue {
-      color: var(--cross-blue);
-    }
+      .cross-blue {
+        color: var(--cross-blue);
+      }
 
-    .cross-red {
-      color: var(--cross-red);
-    }
+      .cross-red {
+        color: var(--cross-red);
+      }
 
-    .cross-green,
-    .cross-orange,
-    .cross-blue,
-    .cross-red {
-      display: inline-block;
-      line-height: 1.2;
-      vertical-align: middle;
-      font-weight: bold;
-    }
+      .cross-green,
+      .cross-orange,
+      .cross-blue,
+      .cross-red {
+        display: inline-block;
+        line-height: 1.2;
+        vertical-align: middle;
+        font-weight: bold;
+      }
 
-    #output span {
-      line-height: 1.2em;
-      vertical-align: middle;
-    }
+      #output span {
+        line-height: 1.2em;
+        vertical-align: middle;
+      }
 
-    /* ========== DARK MODE ========== */
-    body.dark {
-      background-color: #121212;
-      color: #e0e0e0;
-    }
+      /* ========== DARK MODE ========== */
+      body.dark {
+        background-color: #121212;
+        color: #e0e0e0;
+      }
 
-    body.dark input,
-    body.dark button {
-      background-color: #1e1e1e;
-      color: #e0e0e0;
-      border: 1px solid #444;
-    }
+      body.dark input,
+      body.dark button {
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+        border: 1px solid #444;
+      }
 
-    body.dark #output {
-      color: #9be5ff;
-    }
+      body.dark #output {
+        color: #9be5ff;
+      }
 
-    body.dark {
-      --cross-green: lightgreen;
-      --cross-orange: gold;
-      --cross-blue: lightskyblue;
-      --cross-red: pink;
-    }
-  </style>
-</head>
-<body>
-<main>
-  <h1>Rubik's Cube Cross Solver</h1>
-	
-  <div style="position: absolute; top: 10px; right: 20px;">
-    <button id="themeToggle" onclick="toggleTheme()">🌙</button>
-  </div>
-	
-  <p>
-    Scramble with <strong>white on top</strong> and <strong>green in front</strong>.
-    (Solution places the white cross on the <strong>D face</strong>.)
-  </p>
+      body.dark {
+        --cross-green: lightgreen;
+        --cross-orange: gold;
+        --cross-blue: lightskyblue;
+        --cross-red: pink;
+      }
+    </style>
+  </head>
 
-  <!-- ========== Mode Section ========== -->
-  <div class="mode-section">
-    <label>
-      <input type="radio" name="inputMode" id="modeScramble" value="scramble" checked>
-      Scramble Mode
-    </label>
-    <label>
-      <input type="radio" name="inputMode" id="modeCross" value="cross">
-      Cross Location Mode
-    </label>
-  </div>
+  <body>
+    <main>
+      <h1>Rubik's Cube Cross Solver</h1>
 
-  <!-- ========== Scramble Input Section ========== -->
-  <div id="scrambleInputSection">
-    <label for="scramble"><strong>Scramble:</strong></label>
-    <input type="text" id="scramble" placeholder="e.g., R U R' U2" />
-  </div>
+      <div style="position: absolute; top: 10px; right: 20px;">
+        <button id="themeToggle" onclick="toggleTheme()">🌙</button>
+      </div>
 
-  <!-- ========== Cross Location Section ========== -->
-  <div id="crossInputSection">
-    <div class="edge-input-table">
-      <div class="edge-row">
-        <div class="edge-cell">
-          <label class="wg-label">W/G edge</label>
-        </div>
-        <div class="edge-cell">
-          <input type="text" id="wBox" class="edge-box" placeholder="e.g., UF">
+      <p>
+        Scramble with <strong>white on top</strong> and
+        <strong>green in front</strong>. (Solution places the white cross on the
+        <strong>D face</strong>.)
+      </p>
+
+      <!-- ========== Mode Section ========== -->
+      <div class="mode-section">
+        <label>
+          <input type="radio" name="inputMode" id="modeScramble" value="scramble" checked>
+          Scramble Mode
+        </label>
+        <label>
+          <input type="radio" name="inputMode" id="modeCross" value="cross">
+          Cross Location Mode
+        </label>
+      </div>
+
+      <!-- ========== Scramble Input Section ========== -->
+      <div id="scrambleInputSection">
+        <label for="scramble"><strong>Scramble:</strong></label>
+        <input type="text" id="scramble" placeholder="e.g., R U R' U2" />
+      </div>
+
+      <!-- ========== Cross Location Section ========== -->
+      <div id="crossInputSection">
+        <div class="edge-input-table">
+          <div class="edge-row">
+            <div class="edge-cell">
+              <label class="wg-label">W/G edge</label>
+            </div>
+            <div class="edge-cell">
+              <input type="text" id="wBox" class="edge-box" placeholder="e.g., UF">
+            </div>
+          </div>
+
+          <div class="edge-row">
+            <div class="edge-cell">
+              <label class="wo-label">W/O edge</label>
+            </div>
+            <div class="edge-cell">
+              <input type="text" id="xBox" class="edge-box" placeholder="e.g., UL">
+            </div>
+          </div>
+
+          <div class="edge-row">
+            <div class="edge-cell">
+              <label class="wb-label">W/B edge</label>
+            </div>
+            <div class="edge-cell">
+              <input type="text" id="yBox" class="edge-box" placeholder="e.g., UB">
+            </div>
+          </div>
+
+          <div class="edge-row">
+            <div class="edge-cell">
+              <label class="wr-label">W/R edge</label>
+            </div>
+            <div class="edge-cell">
+              <input type="text" id="zBox" class="edge-box" placeholder="e.g., UR">
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="edge-row">
-        <div class="edge-cell">
-          <label class="wo-label">W/O edge</label>
-        </div>
-        <div class="edge-cell">
-          <input type="text" id="xBox" class="edge-box" placeholder="e.g., UL">
-        </div>
+      <button onclick="solveCross()">Solve Cross</button>
+      <button onclick="resetScramble()">Reset</button>
+      <button id="randomBtn" onclick="generateScramble()">Random Scramble</button>
+      <button id="randomLocBtn" onclick="generateRandomLocations()">Random Locations</button>
+
+      <div id="output"></div>
+
+      <!-- ========== Twisty Player ========== -->
+      <div id="twisty-container" style="margin-top: 30px; height: 300px; display: flex; justify-content: center; align-items: center;">
+        <twisty-player id="twisty" puzzle="3x3x3" control-panel="full" background="none"></twisty-player>
       </div>
 
-      <div class="edge-row">
-        <div class="edge-cell">
-          <label class="wb-label">W/B edge</label>
-        </div>
-        <div class="edge-cell">
-          <input type="text" id="yBox" class="edge-box" placeholder="e.g., UB">
-        </div>
-      </div>
+      <script>
+        /************************************************************
+         * 0) Mode Toggle
+         ************************************************************/
+        const scrambleSection = document.getElementById("scrambleInputSection");
+        const crossSection = document.getElementById("crossInputSection");
 
-      <div class="edge-row">
-        <div class="edge-cell">
-          <label class="wr-label">W/R edge</label>
-        </div>
-        <div class="edge-cell">
-          <input type="text" id="zBox" class="edge-box" placeholder="e.g., UR">
-        </div>
-      </div>
-    </div>
-  </div>
+        const scrambleInput = document.getElementById("scramble");
+        const randomBtn = document.getElementById("randomBtn");
+        const randomLocBtn = document.getElementById("randomLocBtn");
 
-  <button onclick="solveCross()">Solve Cross</button>
-  <button onclick="resetScramble()">Reset</button>
-  <button id="randomBtn" onclick="generateScramble()">Random Scramble</button>
-  <button id="randomLocBtn" onclick="generateRandomLocations()">Random Locations</button>
+        const wBox = document.getElementById("wBox");
+        const xBox = document.getElementById("xBox");
+        const yBox = document.getElementById("yBox");
+        const zBox = document.getElementById("zBox");
 
-<div id="output"></div>
+        let currentMode = "scramble"; // Global variable to track current mode
 
-  <!-- ========== Twisty Player ========== -->
-<div id="twisty-container" style="margin-top: 30px; height: 300px; display: flex; justify-content: center; align-items: center;">
-  <twisty-player id="twisty" puzzle="3x3x3" control-panel="full" background="none"></twisty-player>
-</div>
+        function updateMode() {
+          const modeScramble = document.getElementById("modeScramble").checked;
+          let newMode = modeScramble ? "scramble" : "cross";
 
-<script>
-    /************************************************************
-     * 0) Mode Toggle
-     ************************************************************/
-    const scrambleSection = document.getElementById("scrambleInputSection");
-    const crossSection    = document.getElementById("crossInputSection");
+          // Only reset if the mode has changed
+          if (newMode !== currentMode) {
+            resetScramble();  // Reset all inputs and the twisty player
+            currentMode = newMode;
+          }
 
-    const scrambleInput   = document.getElementById("scramble");
-    const randomBtn       = document.getElementById("randomBtn");
-    const randomLocBtn    = document.getElementById("randomLocBtn");
-	  
-    const wBox = document.getElementById("wBox");
-    const xBox = document.getElementById("xBox");
-    const yBox = document.getElementById("yBox");
-    const zBox = document.getElementById("zBox");
-
-    let currentMode = "scramble"; // Global variable to track current mode
-	  
-    function updateMode() {
-  	const modeScramble = document.getElementById("modeScramble").checked;
-  	let newMode = modeScramble ? "scramble" : "cross";
-	
-  	// Only reset if the mode has changed
-  	if (newMode !== currentMode) {
-    	resetScramble();  // Reset all inputs and the twisty player
-    	currentMode = newMode;
-  	}
-	
-  	if (modeScramble) {
-    	scrambleSection.style.display = "block";
-    	crossSection.style.display    = "none";
-    	randomBtn.style.display       = "inline-block"; // random scramble button visible
-        randomLocBtn.style.display    = "none"; // hide random location button
-  
-	} else {
-    	scrambleSection.style.display = "none";
-    	crossSection.style.display    = "block";
-    	randomBtn.style.display       = "none"; // hide random in location mode
-  	randomLocBtn.style.display    = "inline-block";
-	}
-	}
-
-
-    document.getElementById("modeScramble").addEventListener("change", updateMode);
-    document.getElementById("modeCross").addEventListener("change", updateMode);
-    updateMode(); // init
-
-    /************************************************************
-     * 1) CROSS / SCRAMBLE CONFIG
-     ************************************************************/
-    const crossColor = { w: 'green', x: 'orange', y: 'blue', z: 'red' };
-    const crossPieces = { w: 'UF', x: 'UL', y: 'UB', z: 'UR' };
-
-    // For each cross piece, first sticker is white, second is side color
-    const edgeFacelets = {
-      UF: ['U8', 'F2'], FU: ['F2', 'U8'],
-      UL: ['U4', 'L2'], LU: ['L2', 'U4'],
-      UB: ['U2', 'B2'], BU: ['B2', 'U2'],
-      UR: ['U6', 'R2'], RU: ['R2', 'U6'],
-
-      DF: ['D2', 'F8'], FD: ['F8', 'D2'],
-      DL: ['D4', 'L8'], LD: ['L8', 'D4'],
-      DB: ['D8', 'B8'], BD: ['B8', 'D8'],
-      DR: ['D6', 'R8'], RD: ['R8', 'D6'],
-
-      FR: ['F6', 'R4'], RF: ['R4', 'F6'],
-      FL: ['F4', 'L6'], LF: ['L6', 'F4'],
-      BR: ['B4', 'R6'], RB: ['R6', 'B4'],
-      BL: ['B6', 'L4'], LB: ['L4', 'B6']
-    };
-
-    let solutionTable = {};
-
-    fetch("./complete_cross_solutions.json")
-      .then(r => r.json())
-      .then(bigData => {
-        const arr = bigData.results || bigData; // handle {results: [...]}, or array
-        arr.forEach(row => {
-          let key = `${row.w}_${row.x}_${row.y}_${row.z}`;
-          solutionTable[key] = row.Solution;
-        });
-        console.log("Solutions loaded:", Object.keys(solutionTable).length);
-      })
-      .catch(err => console.error("JSON load error:", err));
-
-    /************************************************************
-     * 2) MOVE TABLES
-     ************************************************************/
-    const MOVE_TABLES = {
-      "U": {"UF":"UL","UL":"UB","UB":"UR","UR":"UF","FU":"LU","LU":"BU","BU":"RU","RU":"FU"},
-      "U'":{"UF":"UR","UR":"UB","UB":"UL","UL":"UF","FU":"RU","RU":"BU","BU":"LU","LU":"FU"},
-      "U2":{"UF":"UB","UB":"UF","UL":"UR","UR":"UL","FU":"BU","BU":"FU","LU":"RU","RU":"LU"},
-
-      "D": {"DF":"DR","DR":"DB","DB":"DL","DL":"DF","FD":"RD","RD":"BD","BD":"LD","LD":"FD"},
-      "D'":{"DF":"DL","DL":"DB","DB":"DR","DR":"DF","FD":"LD","LD":"BD","BD":"RD","RD":"FD"},
-      "D2":{"DF":"DB","DB":"DF","DR":"DL","DL":"DR","FD":"BD","BD":"FD","RD":"LD","LD":"RD"},
-
-      "F": {"FU":"FR","FR":"FD","FD":"FL","FL":"FU","UF":"RF","RF":"DF","DF":"LF","LF":"UF"},
-      "F'":{"FU":"FL","FL":"FD","FD":"FR","FR":"FU","UF":"LF","LF":"DF","DF":"RF","RF":"UF"},
-      "F2":{"FU":"FD","FD":"FU","FR":"FL","FL":"FR","UF":"DF","DF":"UF","RF":"LF","LF":"RF"},
-
-      "B": {"BU":"BL","BL":"BD","BD":"BR","BR":"BU","UB":"LB","LB":"DB","DB":"RB","RB":"UB"},
-      "B'":{"BU":"BR","BR":"BD","BD":"BL","BL":"BU","UB":"RB","RB":"DB","DB":"LB","LB":"UB"},
-      "B2":{"BU":"BD","BD":"BU","BR":"BL","BL":"BR","UB":"DB","DB":"UB","RB":"LB","LB":"RB"},
-
-      "R": {"RU":"RB","RB":"RD","RD":"RF","RF":"RU","UR":"BR","BR":"DR","DR":"FR","FR":"UR"},
-      "R'":{"RU":"RF","RF":"RD","RD":"RB","RB":"RU","UR":"FR","FR":"DR","DR":"BR","BR":"UR"},
-      "R2":{"RU":"RD","RD":"RU","RF":"RB","RB":"RF","UR":"DR","DR":"UR","FR":"BR","BR":"FR"},
-
-      "L": {"LU":"LF","LF":"LD","LD":"LB","LB":"LU","UL":"FL","FL":"DL","DL":"BL","BL":"UL"},
-      "L'":{"LU":"LB","LB":"LD","LD":"LF","LF":"LU","UL":"BL","BL":"DL","DL":"FL","FL":"UL"},
-      "L2":{"LU":"LD","LD":"LU","LF":"LB","LB":"LF","UL":"DL","DL":"UL","FL":"BL","BL":"FL"}
-    };
-
-    /************************************************************
-     * 3) CORE LOGIC
-     ************************************************************/
-    function applyMove(state, move) {
-      const perm = MOVE_TABLES[move];
-      let newState = {};
-      for (let key in state) {
-        newState[key] = perm[state[key]] || state[key];
-      }
-      return newState;
-    }
-
-    function applyScramble(state, scramble) {
-      const moves = scramble.replace(/\s+/g, '').match(/([URFDLB]2?'?)/g) || [];
-      for (const move of moves) {
-        if (!(move in MOVE_TABLES)) {
-          throw new Error("Invalid move: " + move);
-        }
-        state = applyMove(state, move);
-      }
-      return state;
-    }
-
-    function updateCubeNet(state) {
-      document.querySelectorAll('.sticker').forEach(el => el.className = 'sticker');
-
-      const centers = {
-        U5: 'white', D5: 'yellow',
-        F5: 'green', B5: 'blue',
-        R5: 'red',   L5: 'orange'
-      };
-      for (let id in centers) {
-        document.querySelectorAll(`#${id}`).forEach(el => {
-          el.classList.add(centers[id]);
-        });
-      }
-
-      for (let label in state) {
-        const pos = state[label];
-        const facelets = edgeFacelets[pos];
-        if (!facelets) continue;
-        document.querySelectorAll(`#${facelets[0]}`).forEach(el => {
-          el.classList.add('white');
-        });
-        document.querySelectorAll(`#${facelets[1]}`).forEach(el => {
-          el.classList.add(crossColor[label]);
-        });
-      }
-    }
-
-    function normalizeScramble(raw) {
-      const sequence = raw.replace(/\s+/g, '').match(/([URFDLB])('?|2)?/g);
-      if (!sequence) return '';
-      const optimized = [];
-      let i = 0;
-      while (i < sequence.length) {
-        const face = sequence[i][0];
-        let count = 0;
-        while (i < sequence.length && sequence[i][0] === face) {
-          const mod = sequence[i].slice(1);
-          if (mod === "'") count += 3;
-          else if (mod === "2") count += 2;
-          else count += 1;
-          i++;
-        }
-        count %= 4;
-        if (count === 1) optimized.push(face);
-        else if (count === 2) optimized.push(face + '2');
-        else if (count === 3) optimized.push(face + "'");
-      }
-      return optimized.join(' ');
-    }
-
-    /************************************************************
-     * 4) SOLVE CROSS (with 2 modes)
-     ************************************************************/
-function solveCross() {
-  const scrambleMode = document.getElementById("modeScramble").checked;
-  let finalState = { ...crossPieces };
-  let outputText = "";
-  let normalized = "";  // this is the fix
-
-      if (scrambleMode) {
-        // SCRAMBLE MODE
-        let rawInput = scrambleInput.value.trim();
-        normalized = normalizeScramble(rawInput);
-        scrambleInput.value = normalized;
-
-        if (!normalized.match(/^([URFDLB]2?'?)(\s([URFDLB]2?'?))*$/)) {
-          alert("Scramble invalid");
-          return;
+          if (modeScramble) {
+            scrambleSection.style.display = "block";
+            crossSection.style.display = "none";
+            randomBtn.style.display = "inline-block"; // random scramble button visible
+            randomLocBtn.style.display = "none"; // hide random location button
+          } else {
+            scrambleSection.style.display = "none";
+            crossSection.style.display = "block";
+            randomBtn.style.display = "none"; // hide random in location mode
+            randomLocBtn.style.display = "inline-block";
+          }
         }
 
-        finalState = applyScramble({ ...crossPieces }, normalized);
+        document.getElementById("modeScramble").addEventListener("change", updateMode);
+        document.getElementById("modeCross").addEventListener("change", updateMode);
+        updateMode(); // init
 
-        // Auto-fill the location boxes with the final positions
-        wBox.value = finalState.w;
-        xBox.value = finalState.x;
-        yBox.value = finalState.y;
-        zBox.value = finalState.z;
+        /************************************************************
+         * 1) CROSS / SCRAMBLE CONFIG
+         ************************************************************/
+        const crossColor = { w: 'green', x: 'orange', y: 'blue', z: 'red' };
+        const crossPieces = { w: 'UF', x: 'UL', y: 'UB', z: 'UR' };
 
-        // Show cross piece locations
-outputText = `Current cross state: (${getColoredCrossText(finalState)})`;
+        // For each cross piece, first sticker is white, second is side color
+        const edgeFacelets = {
+          UF: ['U8', 'F2'], FU: ['F2', 'U8'],
+          UL: ['U4', 'L2'], LU: ['L2', 'U4'],
+          UB: ['U2', 'B2'], BU: ['B2', 'U2'],
+          UR: ['U6', 'R2'], RU: ['R2', 'U6'],
 
-      } else {
-        // LOCATION MODE
-        let wVal = wBox.value.trim().toUpperCase();
-        let xVal = xBox.value.trim().toUpperCase();
-        let yVal = yBox.value.trim().toUpperCase();
-        let zVal = zBox.value.trim().toUpperCase();
+          DF: ['D2', 'F8'], FD: ['F8', 'D2'],
+          DL: ['D4', 'L8'], LD: ['L8', 'D4'],
+          DB: ['D8', 'B8'], BD: ['B8', 'D8'],
+          DR: ['D6', 'R8'], RD: ['R8', 'D6'],
 
-        // Must be exactly 2 letters from [U,D,F,B,L,R]
-        let pattern = /^[UDFBLR]{2}$/;
-        if (!pattern.test(wVal) || !pattern.test(xVal)
-         || !pattern.test(yVal) || !pattern.test(zVal)) {
-          alert("Each piece location must be 2 letters from [U,D,F,B,L,R], e.g. UF, UL, UB, UR");
-          return;
+          FR: ['F6', 'R4'], RF: ['R4', 'F6'],
+          FL: ['F4', 'L6'], LF: ['L6', 'F4'],
+          BR: ['B4', 'R6'], RB: ['R6', 'B4'],
+          BL: ['B6', 'L4'], LB: ['L4', 'B6']
+        };
+
+        let solutionTable = {};
+
+        fetch("./complete_cross_solutions.json")
+          .then(r => r.json())
+          .then(bigData => {
+            const arr = bigData.results || bigData; // handle {results: [...]}, or array
+            arr.forEach(row => {
+              let key = `${row.w}_${row.x}_${row.y}_${row.z}`;
+              solutionTable[key] = row.Solution;
+            });
+            console.log("Solutions loaded:", Object.keys(solutionTable).length);
+          })
+          .catch(err => console.error("JSON load error:", err));
+
+        /************************************************************
+         * 2) MOVE TABLES
+         ************************************************************/
+        const MOVE_TABLES = {
+          "U":   { "UF": "UL", "UL": "UB", "UB": "UR", "UR": "UF", "FU": "LU", "LU": "BU", "BU": "RU", "RU": "FU" },
+          "U'":  { "UF": "UR", "UR": "UB", "UB": "UL", "UL": "UF", "FU": "RU", "RU": "BU", "BU": "LU", "LU": "FU" },
+          "U2":  { "UF": "UB", "UB": "UF", "UL": "UR", "UR": "UL", "FU": "BU", "BU": "FU", "LU": "RU", "RU": "LU" },
+
+          "D":   { "DF": "DR", "DR": "DB", "DB": "DL", "DL": "DF", "FD": "RD", "RD": "BD", "BD": "LD", "LD": "FD" },
+          "D'":  { "DF": "DL", "DL": "DB", "DB": "DR", "DR": "DF", "FD": "LD", "LD": "BD", "BD": "RD", "RD": "FD" },
+          "D2":  { "DF": "DB", "DB": "DF", "DR": "DL", "DL": "DR", "FD": "BD", "BD": "FD", "RD": "LD", "LD": "RD" },
+
+          "F":   { "FU": "FR", "FR": "FD", "FD": "FL", "FL": "FU", "UF": "RF", "RF": "DF", "DF": "LF", "LF": "UF" },
+          "F'":  { "FU": "FL", "FL": "FD", "FD": "FR", "FR": "FU", "UF": "LF", "LF": "DF", "DF": "RF", "RF": "UF" },
+          "F2":  { "FU": "FD", "FD": "FU", "FR": "FL", "FL": "FR", "UF": "DF", "DF": "UF", "RF": "LF", "LF": "RF" },
+
+          "B":   { "BU": "BL", "BL": "BD", "BD": "BR", "BR": "BU", "UB": "LB", "LB": "DB", "DB": "RB", "RB": "UB" },
+          "B'":  { "BU": "BR", "BR": "BD", "BD": "BL", "BL": "BU", "UB": "RB", "RB": "DB", "DB": "LB", "LB": "UB" },
+          "B2":  { "BU": "BD", "BD": "BU", "BR": "BL", "BL": "BR", "UB": "DB", "DB": "UB", "RB": "LB", "LB": "RB" },
+
+          "R":   { "RU": "RB", "RB": "RD", "RD": "RF", "RF": "RU", "UR": "BR", "BR": "DR", "DR": "FR", "FR": "UR" },
+          "R'":  { "RU": "RF", "RF": "RD", "RD": "RB", "RB": "RU", "UR": "FR", "FR": "DR", "DR": "BR", "BR": "UR" },
+          "R2":  { "RU": "RD", "RD": "RU", "RF": "RB", "RB": "RF", "UR": "DR", "DR": "UR", "FR": "BR", "BR": "FR" },
+
+          "L":   { "LU": "LF", "LF": "LD", "LD": "LB", "LB": "LU", "UL": "FL", "FL": "DL", "DL": "BL", "BL": "UL" },
+          "L'":  { "LU": "LB", "LB": "LD", "LD": "LF", "LF": "LU", "UL": "BL", "BL": "DL", "DL": "FL", "FL": "UL" },
+          "L2":  { "LU": "LD", "LD": "LU", "LF": "LB", "LB": "LF", "UL": "DL", "DL": "UL", "FL": "BL", "BL": "FL" }
+        };
+
+        /************************************************************
+         * 3) CORE LOGIC
+         ************************************************************/
+        function applyMove(state, move) {
+          const perm = MOVE_TABLES[move];
+          let newState = {};
+          for (let key in state) {
+            newState[key] = perm[state[key]] || state[key];
+          }
+          return newState;
         }
 
-        // Additional checks:
+        function applyScramble(state, scramble) {
+          const moves = scramble.replace(/\s+/g, '').match(/([URFDLB]2?'?)/g) || [];
+          for (const move of moves) {
+            if (!(move in MOVE_TABLES)) {
+              throw new Error("Invalid move: " + move);
+            }
+            state = applyMove(state, move);
+          }
+          return state;
+        }
 
-	// 0) Must not be invalid edge types (e.g., UU, UD, LR, etc.)
-	const invalidEdgeSet = new Set([
-	  'UU', 'DD', 'LL', 'RR', 'FF', 'BB',
-	  'UD', 'DU', 'LR', 'RL', 'FB', 'BF'
-	]);
-	
-	const vals = [wVal, xVal, yVal, zVal];  // Define this once here
-	
-	for (let val of vals) {
-	  if (invalidEdgeSet.has(val)) {
-	    alert(`${val} is not a valid edge — same face or opposite face combination.`);
-	    return;
-	  }
-	}
-	
-	// 1) No two boxes can be the same
-	let setCheck = new Set(vals);
-	if (setCheck.size < 4) {
-	  alert("Two or more edges have the same location. That is invalid.");
-	  return;
-	}
-	
-	// 2) No reversed pairs among them
-	for (let i = 0; i < vals.length; i++) {
-	  for (let j = i + 1; j < vals.length; j++) {
-	    if (isReversed(vals[i], vals[j])) {
-	      alert(`Edges ${vals[i]} and ${vals[j]} are reverses, meaning the same piece. Invalid.`);
-	      return;
-	    }
-	  }
-	}
+        function updateCubeNet(state) {
+          document.querySelectorAll('.sticker').forEach(el => el.className = 'sticker');
 
-        finalState = { w: wVal, x: xVal, y: yVal, z: zVal };
-outputText = `Current cross state: (${getColoredCrossText(finalState)})`;
-      }
+          const centers = {
+            U5: 'white',
+            D5: 'yellow',
+            F5: 'green',
+            B5: 'blue',
+            R5: 'red',
+            L5: 'orange'
+          };
 
-      // => Update net
-      updateCubeNet(finalState);
+          for (let id in centers) {
+            document.querySelectorAll(`#${id}`).forEach(el => {
+              el.classList.add(centers[id]);
+            });
+          }
 
-      // => Lookup solution
-      const key = `${finalState.w}_${finalState.x}_${finalState.y}_${finalState.z}`;
-      const finalSolution = solutionTable[key];
-	if (finalSolution) {
-	  outputText += `<br>Solution: <strong>${finalSolution}</strong>`;
+          for (let label in state) {
+            const pos = state[label];
+            const facelets = edgeFacelets[pos];
+            if (!facelets) continue;
+            document.querySelectorAll(`#${facelets[0]}`).forEach(el => {
+              el.classList.add('white');
+            });
+            document.querySelectorAll(`#${facelets[1]}`).forEach(el => {
+              el.classList.add(crossColor[label]);
+            });
+          }
+        }
 
-	  if (scrambleMode) {
+        function normalizeScramble(raw) {
+          const sequence = raw.replace(/\s+/g, '').match(/([URFDLB])('?|2)?/g);
+          if (!sequence) return '';
+          const optimized = [];
+          let i = 0;
+          while (i < sequence.length) {
+            const face = sequence[i][0];
+            let count = 0;
+            while (i < sequence.length && sequence[i][0] === face) {
+              const mod = sequence[i].slice(1);
+              if (mod === "'") count += 3;
+              else if (mod === "2") count += 2;
+              else count += 1;
+              i++;
+            }
+            count %= 4;
+            if (count === 1) optimized.push(face);
+            else if (count === 2) optimized.push(face + '2');
+            else if (count === 3) optimized.push(face + "'");
+          }
+          return optimized.join(' ');
+        }
 
-	    showScrambleAndSolution(normalized, finalSolution);
-	  } else {
-	    showSolutionOnly(finalSolution);
-	  }
+        /************************************************************
+         * 4) SOLVE CROSS (with 2 modes)
+         ************************************************************/
+        function solveCross() {
+          const scrambleMode = document.getElementById("modeScramble").checked;
+          let finalState = { ...crossPieces };
+          let outputText = "";
+          let normalized = "";  // this is the fix
 
-	} else {
-	  outputText += `<br>Solution: <em>not found for: ${key}</em>`;
+          if (scrambleMode) {
+            // SCRAMBLE MODE
+            let rawInput = scrambleInput.value.trim();
+            normalized = normalizeScramble(rawInput);
+            scrambleInput.value = normalized;
 
-	  // Clear visual if no solution
-	  const player = document.getElementById("twisty");
-	  player.removeAttribute("alg");
-	  player.removeAttribute("experimental-setup-alg");
-	}
+            if (!normalized.match(/^([URFDLB]2?'?)(\s([URFDLB]2?'?))*$/)) {
+              alert("Scramble invalid");
+              return;
+            }
 
+            finalState = applyScramble({ ...crossPieces }, normalized);
 
-      document.getElementById("output").innerHTML = outputText;
-    }
+            // Auto-fill the location boxes with the final positions
+            wBox.value = finalState.w;
+            xBox.value = finalState.x;
+            yBox.value = finalState.y;
+            zBox.value = finalState.z;
 
-      // Twisty player
-      // Scramble mode Twisty player  
-      function showScrambleAndSolution(scramble, solution) {
-	  const player = document.getElementById("twisty");
-	  player.setAttribute("experimental-setup-alg", scramble.trim());
-	  player.setAttribute("alg", solution.trim());
-	}
+            // Show cross piece locations
+            outputText = `Current cross state: (${getColoredCrossText(finalState)})`;
+          } else {
+            // LOCATION MODE
+            let wVal = wBox.value.trim().toUpperCase();
+            let xVal = xBox.value.trim().toUpperCase();
+            let yVal = yBox.value.trim().toUpperCase();
+            let zVal = zBox.value.trim().toUpperCase();
 
-      // Cross location mode Twisty player  
-      function showSolutionOnly(solution) {
-  	const player = document.getElementById("twisty");
-	
-  	// Step 1: Generate the reversed version of the solution
-  	const reversed = reverseAlgorithm(solution.trim());
-	
-  	// Step 2: Add a z2 rotation before the reversed sequence for orientation alignment
-  	const setupAlg = `z2 ${reversed}`;
-	
-  	// Step 3: Set the Twisty Player attributes
-  	player.setAttribute("experimental-setup-alg", setupAlg);     // pre-scramble (reverse path)
-  	player.setAttribute("alg", solution.trim());                 // actual solution
-	}
-	  
-    // Helper: check if a is the reverse of b (like 'UF' vs 'FU')
-    function isReversed(a, b) {
-      return a[0] === b[1] && a[1] === b[0];
-    }
+            // Must be exactly 2 letters from [U,D,F,B,L,R]
+            let pattern = /^[UDFBLR]{2}$/;
+            if (!pattern.test(wVal) || !pattern.test(xVal) || !pattern.test(yVal) || !pattern.test(zVal)) {
+              alert("Each piece location must be 2 letters from [U,D,F,B,L,R], e.g. UF, UL, UB, UR");
+              return;
+            }
 
-    /************************************************************
-     * 5) RESET & GENERATE
-     ************************************************************/
-    function resetScramble() {
-      scrambleInput.value = '';
-      wBox.value = '';
-      xBox.value = '';
-      yBox.value = '';
-      zBox.value = '';
+            // Additional checks:
+            // 0) Must not be invalid edge types (e.g., UU, UD, LR, etc.)
+            const invalidEdgeSet = new Set([
+              'UU', 'DD', 'LL', 'RR', 'FF', 'BB',
+              'UD', 'DU', 'LR', 'RL', 'FB', 'BF'
+            ]);
 
-      const baseState = { ...crossPieces };
-      updateCubeNet(baseState);
+            const vals = [wVal, xVal, yVal, zVal];
 
-document.getElementById("output").innerHTML =
-  `Current cross state: (${getColoredCrossText(baseState)})<br>Solution: Done`;
+            for (let val of vals) {
+              if (invalidEdgeSet.has(val)) {
+                alert(`${val} is not a valid edge — same face or opposite face combination.`);
+                return;
+              }
+            }
 
+            // 1) No two boxes can be the same
+            let setCheck = new Set(vals);
+            if (setCheck.size < 4) {
+              alert("Two or more edges have the same location. That is invalid.");
+              return;
+            }
 
-	// Reset Twisty Player to solved cube properly
-	const player = document.getElementById("twisty");
-	player.setAttribute("experimental-setup-alg", "");
-	player.setAttribute("alg", "");
-	player?.reset?.(); // This line ensures full reset
+            // 2) No reversed pairs among them
+            for (let i = 0; i < vals.length; i++) {
+              for (let j = i + 1; j < vals.length; j++) {
+                if (isReversed(vals[i], vals[j])) {
+                  alert(`Edges ${vals[i]} and ${vals[j]} are reverses, meaning the same piece. Invalid.`);
+                  return;
+                }
+              }
+            }
 
-	    
-    }
+            finalState = { w: wVal, x: xVal, y: yVal, z: zVal };
+            outputText = `Current cross state: (${getColoredCrossText(finalState)})`;
+          }
 
-    function generateScramble() {
-      const faces = ['U','D','F','B','R','L'];
-      const mods = ['', "'", '2'];
-      let scramble = [];
-      let lastFace = '';
-      while (scramble.length < 20) {
-        let f = faces[Math.floor(Math.random() * 6)];
-        if (f === lastFace) continue;
-        lastFace = f;
-        let m = mods[Math.floor(Math.random() * mods.length)];
-        scramble.push(f + m);
-      }
-      scrambleInput.value = scramble.join(' ');
-    }
+          // => Update net
+          updateCubeNet(finalState);
 
-function generateRandomLocations() {
-  // List all 24 valid edge locations
-  const allEdges = [
-    "UF", "UR", "UL", "UB",
-    "FU", "FR", "FL", "FD",
-    "DF", "DR", "DL", "DB",
-    "RF", "RU", "RD", "RB",
-    "LU", "LD", "LF", "LB",
-    "BL", "BR", "BU", "BD"
-  ];
+          // => Lookup solution
+          const key = `${finalState.w}_${finalState.x}_${finalState.y}_${finalState.z}`;
+          const finalSolution = solutionTable[key];
 
-  // Shuffle using Fisher-Yates
-  for (let i = allEdges.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [allEdges[i], allEdges[j]] = [allEdges[j], allEdges[i]];
-  }
+          if (finalSolution) {
+            outputText += `<br>Solution: <strong>${finalSolution}</strong>`;
 
-  // Select 4 edges, skipping reversed pairs
-  let selected = [];
-  for (const edge of allEdges) {
-    // Reverse is e.g. "UF" => "FU"
-    const reversed = edge[1] + edge[0];
-    // Skip if reversed is already in selected
-    if (selected.includes(reversed)) continue;
-    selected.push(edge);
-    if (selected.length === 4) break;
-  }
+            if (scrambleMode) {
+              showScrambleAndSolution(normalized, finalSolution);
+            } else {
+              showSolutionOnly(finalSolution);
+            }
+          } else {
+            outputText += `<br>Solution: <em>not found for: ${key}</em>`;
 
-  // If for some reason we didn't get 4 edges, try again (very unlikely)
-  if (selected.length < 4) {
-    return generateRandomLocations();
-  }
+            // Clear visual if no solution
+            const player = document.getElementById("twisty");
+            player.removeAttribute("alg");
+            player.removeAttribute("experimental-setup-alg");
+          }
 
-  // Fill the location boxes (without calling solveCross)
-  wBox.value = selected[0];
-  xBox.value = selected[1];
-  yBox.value = selected[2];
-  zBox.value = selected[3];
+          document.getElementById("output").innerHTML = outputText;
+        }
 
-  // Done! The user can now manually click "Solve Cross."
-}
+        // Twisty player functions
+        function showScrambleAndSolution(scramble, solution) {
+          const player = document.getElementById("twisty");
+          player.setAttribute("experimental-setup-alg", scramble.trim());
+          player.setAttribute("alg", solution.trim());
+        }
 
-function reverseAlgorithm(algStr) {
-  // Split on spaces to get each move (e.g. ["R", "U", "R'", "U2"])
-  const moves = algStr.trim().split(/\s+/);
-  
-  // Reverse the array
-  moves.reverse(); // e.g. ["U2", "R'", "U", "R"]
-  
-  // Invert each move
-  const inverted = moves.map(move => invertMove(move));
-  
-  // Join back into a string
-  return inverted.join(" ");
-}
+        function showSolutionOnly(solution) {
+          const player = document.getElementById("twisty");
+          // Step 1: Generate the reversed version of the solution
+          const reversed = reverseAlgorithm(solution.trim());
 
-// Helper: invert a single move
-// e.g., invertMove("R") => "R'"
-//       invertMove("R'") => "R"
-//       invertMove("R2") => "R2"
-//       invertMove("U") => "U'"
-function invertMove(move) {
-  // Move is something like "R", "R'", "R2"
-  const face = move[0];
-  const suffix = move.slice(1);
-  
-  if (suffix === "")   return face + "'"; // R -> R'
-  if (suffix === "'")  return face;       // R' -> R
-  if (suffix === "2")  return move;       // R2 -> R2
-  // If it’s something else, just return as is
-  return move;
-}
+          // Step 2: Add a z2 rotation before the reversed sequence for orientation alignment
+          const setupAlg = `z2 ${reversed}`;
 
+          // Step 3: Set the Twisty Player attributes
+          player.setAttribute("experimental-setup-alg", setupAlg);
+          player.setAttribute("alg", solution.trim());
+        }
 
+        // Helper: check if a is the reverse of b (like 'UF' vs 'FU')
+        function isReversed(a, b) {
+          return a[0] === b[1] && a[1] === b[0];
+        }
 
-function getColoredCrossText(state) {
-  const colorClass = {
-    w: "cross-green",
-    x: "cross-orange",
-    y: "cross-blue",
-    z: "cross-red"
-  };
+        /************************************************************
+         * 5) RESET & GENERATE
+         ************************************************************/
+        function resetScramble() {
+          scrambleInput.value = '';
+          wBox.value = '';
+          xBox.value = '';
+          yBox.value = '';
+          zBox.value = '';
 
-  return ['w', 'x', 'y', 'z'].map(label => {
-    const pos = state[label];
-    return `<span class="${colorClass[label]}">${pos}</span>`;
-  }).join(', ');
-}
+          const baseState = { ...crossPieces };
+          updateCubeNet(baseState);
 
-	
-    // Initialize
-    resetScramble();
+          document.getElementById("output").innerHTML =
+            `Current cross state: (${getColoredCrossText(baseState)})<br>Solution: Done`;
 
-/************************************************************
- * 6) DARK MODE TOGGLE
- ************************************************************/
-function toggleTheme() {
-  const isDark = document.body.classList.toggle("dark");
-  localStorage.setItem("theme", isDark ? "dark" : "light");
-  document.getElementById("themeToggle").textContent = isDark ? "☀️" : "🌙";
-}
+          // Reset Twisty Player to solved cube properly
+          const player = document.getElementById("twisty");
+          player.setAttribute("experimental-setup-alg", "");
+          player.setAttribute("alg", "");
+          player?.reset?.(); // This line ensures full reset
+        }
 
-// Apply saved preference on load
-window.addEventListener("DOMContentLoaded", () => {
-  const savedTheme = localStorage.getItem("theme");
-  if (savedTheme === "dark") {
-    document.body.classList.add("dark");
-    document.getElementById("themeToggle").textContent = "☀️";
-  }
-});
+        function generateScramble() {
+          const faces = ['U', 'D', 'F', 'B', 'R', 'L'];
+          const mods = ['', "'", '2'];
+          let scramble = [];
+          let lastFace = '';
 
+          while (scramble.length < 20) {
+            let f = faces[Math.floor(Math.random() * 6)];
+            if (f === lastFace) continue;
+            lastFace = f;
+            let m = mods[Math.floor(Math.random() * mods.length)];
+            scramble.push(f + m);
+          }
+          scrambleInput.value = scramble.join(' ');
+        }
 
+        function generateRandomLocations() {
+          // List all 24 valid edge locations
+          const allEdges = [
+            "UF", "UR", "UL", "UB",
+            "FU", "FR", "FL", "FD",
+            "DF", "DR", "DL", "DB",
+            "RF", "RU", "RD", "RB",
+            "LU", "LD", "LF", "LB",
+            "BL", "BR", "BU", "BD"
+          ];
 
-</script>
-</main>
-<footer style="text-align: center; margin-top: 50px; font-size: 0.9em; color: #666;">
-  © 2025 mwhx10 | Cross Solver V2 | Powered by heavy look-ahead  
-  <br>
-  Visualizer powered by <a href="https://js.cubing.net/cubing/twisty/" target="_blank" rel="noopener noreferrer">Twisty Player</a>  
-  | Cross database by <a href="https://www.reddit.com/user/Balbalit" target="_blank" rel="noopener noreferrer">u/Balbalit</a>
-</footer>	
-</body>
+          // Shuffle using Fisher-Yates
+          for (let i = allEdges.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [allEdges[i], allEdges[j]] = [allEdges[j], allEdges[i]];
+          }
+
+          // Select 4 edges, skipping reversed pairs
+          let selected = [];
+          for (const edge of allEdges) {
+            // Reverse is e.g. "UF" => "FU"
+            const reversed = edge[1] + edge[0];
+            // Skip if reversed is already in selected
+            if (selected.includes(reversed)) continue;
+            selected.push(edge);
+            if (selected.length === 4) break;
+          }
+
+          // If for some reason we didn't get 4 edges, try again (very unlikely)
+          if (selected.length < 4) {
+            return generateRandomLocations();
+          }
+
+          // Fill the location boxes (without calling solveCross)
+          wBox.value = selected[0];
+          xBox.value = selected[1];
+          yBox.value = selected[2];
+          zBox.value = selected[3];
+        }
+
+        function reverseAlgorithm(algStr) {
+          // Split on spaces to get each move (e.g. ["R", "U", "R'", "U2"])
+          const moves = algStr.trim().split(/\s+/);
+          moves.reverse(); // e.g. ["U2", "R'", "U", "R"]
+          const inverted = moves.map(move => invertMove(move));
+          return inverted.join(" ");
+        }
+
+        // Helper: invert a single move
+        // e.g., invertMove("R") => "R'"
+        //       invertMove("R'") => "R"
+        //       invertMove("R2") => "R2"
+        //       invertMove("U") => "U'"
+        function invertMove(move) {
+          const face = move[0];
+          const suffix = move.slice(1);
+          if (suffix === "") return face + "'";   // R -> R'
+          if (suffix === "'") return face;         // R' -> R
+          if (suffix === "2") return move;         // R2 -> R2
+          return move;
+        }
+
+        function getColoredCrossText(state) {
+          const colorClass = {
+            w: "cross-green",
+            x: "cross-orange",
+            y: "cross-blue",
+            z: "cross-red"
+          };
+          return ['w', 'x', 'y', 'z'].map(label => {
+            const pos = state[label];
+            return `<span class="${colorClass[label]}">${pos}</span>`;
+          }).join(', ');
+        }
+
+        // Initialize
+        resetScramble();
+
+        /************************************************************
+         * 6) DARK MODE TOGGLE
+         ************************************************************/
+        function toggleTheme() {
+          const isDark = document.body.classList.toggle("dark");
+          localStorage.setItem("theme", isDark ? "dark" : "light");
+          document.getElementById("themeToggle").textContent = isDark ? "☀️" : "🌙";
+        }
+
+        // Apply saved preference on load
+        window.addEventListener("DOMContentLoaded", () => {
+          const savedTheme = localStorage.getItem("theme");
+          if (savedTheme === "dark") {
+            document.body.classList.add("dark");
+            document.getElementById("themeToggle").textContent = "☀️";
+          }
+        });
+      </script>
+    </main>
+
+    <footer style="text-align: center; margin-top: 50px; font-size: 0.9em; color: #666;">
+      © 2025 mwhx10 | Cross Solver V2 | Powered by heavy look-ahead  
+      <br>
+      Visualizer powered by 
+      <a href="https://js.cubing.net/cubing/twisty/" target="_blank" rel="noopener noreferrer">Twisty Player</a>  
+      | Cross database by 
+      <a href="https://www.reddit.com/user/Balbalit" target="_blank" rel="noopener noreferrer">u/Balbalit</a>
+    </footer>
+  </body>
 </html>
