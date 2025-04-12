@@ -249,7 +249,7 @@ main {
 
   <!-- ========== Twisty Player ========== -->
 <div id="twisty-container" style="margin-top: 30px; height: 300px; display: flex; justify-content: center; align-items: center;">
-  <twisty-player id="twisty" puzzle="3x3x3" control-panel="none" background="none"></twisty-player>
+  <twisty-player id="twisty" puzzle="3x3x3" control-panel="full" background="none"></twisty-player>
 </div>
 
 	
@@ -571,12 +571,8 @@ function solveCross() {
       // Twisty player
 	function showScrambleAndSolution(scramble, solution) {
 	  const player = document.getElementById("twisty");
-	  console.log("Scramble Mode – Twisty setup:", scramble);
-	  console.log("Solution to apply:", solution);
-
 	  player.setAttribute("experimental-setup-alg", scramble.trim());
 	  player.setAttribute("alg", solution.trim());
-	  player.play(); // optional: autoplay
 	}
 
 	
