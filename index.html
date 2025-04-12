@@ -548,6 +548,9 @@ main {
 	  outputText += `<br>Solution: <strong>${finalSolution}</strong>`;
 
 	  if (scrambleMode) {
+
+	    console.log("Calling showScrambleAndSolution with:", normalized, finalSolution);
+
 	    showScrambleAndSolution(normalized, finalSolution);
 	  } else {
 	    showSolutionOnly(finalSolution);
@@ -567,11 +570,16 @@ main {
     }
 
       // Twisty player
-      function showScrambleAndSolution(scramble, solution) {
-      const player = document.getElementById("twisty");
-      player.setAttribute("experimental-setup-alg", scramble);
-      player.setAttribute("alg", solution);
-      }
+	function showScrambleAndSolution(scramble, solution) {
+	  const player = document.getElementById("twisty");
+	  console.log("Scramble Mode – Twisty setup:", scramble);
+	  console.log("Solution to apply:", solution);
+
+	  player.setAttribute("experimental-setup-alg", scramble.trim());
+	  player.setAttribute("alg", solution.trim());
+	  player.play(); // optional: autoplay
+	}
+
 	
       function showSolutionOnly(solution) {
       const player = document.getElementById("twisty");
