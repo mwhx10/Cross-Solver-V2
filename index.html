@@ -193,6 +193,10 @@
   	player.removeAttribute("experimental-setup-alg");
   	player.removeAttribute("alg");
   	player.removeAttribute("experimental-setup-anchor");
+	player.setAttribute("experimental-setup-alg", "");
+	player.setAttribute("alg", "");
+
+		
   	if (typeof player.reset === "function") {
     	player.reset();
   	}
